@@ -41,13 +41,13 @@
 .hero-app-cta h4,
 .hero-app-cta h5,
 .hero-app-cta h6 {
-  font-family: sigvar, Georgia, "Times New Roman", serif;
+  font-family: sigvar;
   font-size: 26px;
   font-weight: 400;
-  font-style: italic;
   color: #fefefe;
   margin: 0;
   line-height: normal;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Description */
@@ -58,6 +58,7 @@
   color: #efefef;
   line-height: 28px;
   margin: 16px 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Reset margin on the CTA paragraph wrapper */
@@ -125,6 +126,9 @@
 /* Desktop+ */
 @media (width >= 900px) {
   .hero-app-cta > div:last-child {
-    left: 40px;
+    left: 50px;
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
   }
 }
