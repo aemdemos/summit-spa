@@ -1,47 +1,106 @@
+/* hero-booking-cta — styled as tabbed booking panel
+   Matches Singapore Airlines "Book Your Flight" tab section */
+
+/* Wrapper — full-width; provides the dark tab-bar background */
 .hero-booking-cta-container .hero-booking-cta-wrapper {
-  max-width: unset;
+  max-width: 100%;
   padding: 0;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 70%) 0, rgb(0 0 0 / 70%) 66px, #fff 66px);
 }
 
+/* Block container — centered */
 .hero-booking-cta {
   position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
+  padding: 0;
+  min-height: 0;
+  max-width: 780px;
+  margin: 0 auto;
 }
 
-.hero-booking-cta h1,
-.hero-booking-cta h2,
-.hero-booking-cta h3,
-.hero-booking-cta h4,
-.hero-booking-cta h5,
-.hero-booking-cta h6,
-.hero-booking-cta p {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--background-color);
+/* The single row container */
+.hero-booking-cta > div {
+  display: flex;
+  flex-direction: column;
 }
 
-.hero-booking-cta.no-image * {
-  color: var(--text-color);
+/* ── Tab header row ── */
+.hero-booking-cta > div > div:first-child {
+  height: 66px;
 }
 
-.hero-booking-cta picture {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  object-fit: cover;
+/* H2 "Book Your Flight" — active tab */
+.hero-booking-cta h2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #00266b;
+  font-family: var(--body-font-family);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: normal;
+  height: 66px;
+  margin: 0;
+  padding: 0 30px;
+  border-bottom: 3px solid #00266b;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 
-.hero-booking-cta img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+/* ── Content area below the tab ── */
+.hero-booking-cta > div > div:nth-child(2) {
+  background-color: #fff;
+  padding: 24px 30px 0;
 }
 
-@media (width >= 900px) {
-  .hero-booking-cta {
-    padding: 40px 32px;
-  }
+.hero-booking-cta > div > div:nth-child(3) {
+  background-color: #fff;
+  padding: 0 30px 30px;
+}
+
+/* Description text */
+.hero-booking-cta > div > div:nth-child(2) p {
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* BOOK NOW button */
+.hero-booking-cta a,
+.hero-booking-cta a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(34 117 211);
+  color: #fff;
+  font-family: var(--body-font-family);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  border: 0;
+  border-radius: 30px;
+  padding: 10px 40px;
+  margin: 16px 0 0;
+  cursor: pointer;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.hero-booking-cta a:hover,
+.hero-booking-cta a.button:hover {
+  background-color: rgb(28 100 185);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* CTA paragraph — reset margin */
+.hero-booking-cta > div > div:last-child p {
+  margin: 0;
 }
