@@ -8,26 +8,29 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
+  margin-left: 40px;
 }
 
 /* Card grid */
 .cards-highlights > ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: space-between;
+  padding-right:40px;
+  margin-bottom: 50px;
 }
 
 /* Card */
 .cards-highlights > ul > li {
-  width: 220px;
-  min-height: 295px;
+  display: flex;
+  flex-direction: column;
+  width: calc((100% / 3) - (40px / 3));
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 6%);
+  transition: all 0.15s;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 6%);
+  position: relative;
   overflow: hidden;
-  background-color: var(--background-color);
 }
 
 /* Card image — first div in each card */
@@ -42,7 +45,7 @@
 
 .cards-highlights > ul > li img {
   width: 100%;
-  height: 115px;
+  height: 180px;
   object-fit: cover;
 }
 
