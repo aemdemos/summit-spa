@@ -289,7 +289,7 @@ main .section.tabs-booking-cta-container > div {
   padding: 0;
 }
 
-/* KrisFlyer login bar */
+/* KrisFlyer login bar — full viewport width background */
 main .section.tabs-booking-cta-container > .default-content-wrapper {
   display: flex;
   align-items: center;

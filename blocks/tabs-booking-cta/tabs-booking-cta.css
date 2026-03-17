@@ -1,13 +1,19 @@
 /* tabs-booking-cta — tabbed booking navigation
    Matches Singapore Airlines 5-tab booking widget */
 
-/* Wrapper — full-width for tab bar dark background */
+/* Wrapper — full-width dark background behind tab bar */
 .tabs-booking-cta-container .tabs-booking-cta-wrapper {
   max-width: 100%;
   padding: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 70%) 0,
+    rgb(0 0 0 / 70%) 66px,
+    #fff 66px
+  );
 }
 
-/* Block — centered */
+/* Block — centered at 780px */
 .tabs-booking-cta {
   padding: 0;
   min-height: 0;
@@ -20,7 +26,6 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   height: 66px;
-  background-color: rgb(0 0 0 / 70%);
 }
 
 /* Individual tab */
@@ -53,12 +58,11 @@
   color: #fff;
 }
 
-/* Active tab */
+/* Active tab — white with navy text, no bottom border */
 .tabs-booking-cta-tab.active {
   background-color: #fff;
   color: #00266b;
   font-weight: 700;
-  border-bottom: 3px solid #00266b;
 }
 
 .tabs-booking-cta-tab.active:hover,
@@ -71,6 +75,7 @@
 .tabs-booking-cta-panel {
   background-color: #fff;
   padding: 30px;
+  min-height: 120px;
 }
 
 .tabs-booking-cta-panel[hidden] {
