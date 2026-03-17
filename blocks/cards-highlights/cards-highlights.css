@@ -1,27 +1,83 @@
+/* Section heading — "Highlights" with orange left accent */
+.cards-highlights-container > .default-content-wrapper h3 {
+  font-family: sigvar, georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #00266b;
+  border-left: 3px solid #ff9f00;
+  padding-left: 10px;
+  margin: 24px 0;
+  line-height: normal;
+}
+
+/* Card grid */
 .cards-highlights > ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
+/* Card */
 .cards-highlights > ul > li {
-  border: 1px solid #dadada;
+  width: 220px;
+  min-height: 295px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 6%);
+  overflow: hidden;
   background-color: var(--background-color);
 }
 
-.cards-highlights .cards-highlights-card-body {
-  margin: 16px;
+/* Card image — first div in each card */
+.cards-highlights > ul > li > div:first-child {
+  line-height: 0;
+  padding: 0;
 }
 
-.cards-highlights .cards-highlights-card-image {
-  line-height: 0;
+.cards-highlights > ul > li > div:first-child p {
+  margin: 0;
 }
 
 .cards-highlights > ul > li img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 115px;
   object-fit: cover;
+}
+
+/* Card body — second div with text content */
+.cards-highlights > ul > li > div:last-child {
+  padding: 20px;
+}
+
+/* Card heading */
+.cards-highlights > ul > li h3 {
+  font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  line-height: 20px;
+  margin: 0 0 8px;
+}
+
+/* Card description */
+.cards-highlights > ul > li > div:last-child p {
+  font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #222;
+  line-height: 20px;
+  margin: 0 0 8px;
+}
+
+/* Card link */
+.cards-highlights > ul > li a {
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cards-highlights > ul > li a:hover {
+  text-decoration: underline;
 }
