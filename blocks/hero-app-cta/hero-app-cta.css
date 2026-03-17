@@ -1,0 +1,47 @@
+.hero-app-cta-container .hero-app-cta-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-app-cta {
+  position: relative;
+  padding: 40px 24px;
+  min-height: 300px;
+}
+
+.hero-app-cta h1,
+.hero-app-cta h2,
+.hero-app-cta h3,
+.hero-app-cta h4,
+.hero-app-cta h5,
+.hero-app-cta h6,
+.hero-app-cta p {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--background-color);
+}
+
+.hero-app-cta.no-image * {
+  color: var(--text-color);
+}
+
+.hero-app-cta picture {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  object-fit: cover;
+  box-sizing: border-box;
+}
+
+.hero-app-cta img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+@media (width >= 900px) {
+  .hero-app-cta {
+    padding: 40px 32px;
+  }
+}

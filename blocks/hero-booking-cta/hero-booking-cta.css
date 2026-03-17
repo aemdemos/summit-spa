@@ -1,0 +1,47 @@
+.hero-booking-cta-container .hero-booking-cta-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-booking-cta {
+  position: relative;
+  padding: 40px 24px;
+  min-height: 300px;
+}
+
+.hero-booking-cta h1,
+.hero-booking-cta h2,
+.hero-booking-cta h3,
+.hero-booking-cta h4,
+.hero-booking-cta h5,
+.hero-booking-cta h6,
+.hero-booking-cta p {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--background-color);
+}
+
+.hero-booking-cta.no-image * {
+  color: var(--text-color);
+}
+
+.hero-booking-cta picture {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  object-fit: cover;
+  box-sizing: border-box;
+}
+
+.hero-booking-cta img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+@media (width >= 900px) {
+  .hero-booking-cta {
+    padding: 40px 32px;
+  }
+}

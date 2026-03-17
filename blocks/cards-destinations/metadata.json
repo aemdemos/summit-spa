@@ -1,0 +1,8 @@
+{
+  "variantName": "cards-destinations",
+  "baseBlock": "cards",
+  "description": "Destination cards with image, city name, travel class, and price",
+  "createdFrom": "https://www.singaporeair.com/en_UK/sg/home",
+  "createdDate": "2026-03-17",
+  "usedOn": ["https://www.singaporeair.com/en_UK/sg/home"]
+}
