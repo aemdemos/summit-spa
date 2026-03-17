@@ -126,21 +126,9 @@
   line-height: 22px;
 }
 
-/* "Book now" link — hidden; entire card is visually clickable */
+/* "Book now" link — hidden; not present in original design */
 .cards-destinations > ul > li > div:last-child p:last-child {
-  margin: 0;
-}
-
-.cards-destinations > ul > li > div:last-child a {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.cards-destinations > ul > li > div:last-child a:hover {
-  text-decoration: underline;
-  color: #fff;
+  display: none;
 }
 
 /* Tablet+ */
