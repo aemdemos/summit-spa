@@ -273,24 +273,21 @@ main .section.highlight {
 }
 
 /* ----------------------------------------------------------------
-   Navy section – KrisFlyer login bar + booking block
+   Navy section – KrisFlyer login bar (above tabs, just under Discover more)
    ---------------------------------------------------------------- */
-main .section.tabs-booking-cta-container {
+
+/* Navy section — overlaps hero bottom, sits above tabs */
+main .section.navy {
   position: relative;
-  z-index: 2;
-  margin-top: -104px; /* overlap: 64px bar + 40px section gap */
+  z-index: 3;
   margin-bottom: 0;
-  padding: 0;
+  margin-right: auto;
+  margin-top: -170px;
 }
 
-/* Reset wrapper constraints inside navy section */
-main .section.tabs-booking-cta-container > div {
-  max-width: 100%;
-  padding: 0;
-}
 
-/* KrisFlyer login bar — full viewport width background */
-main .section.tabs-booking-cta-container > .default-content-wrapper {
+/* KrisFlyer login bar — navy section only */
+main .section.navy .default-content-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -301,8 +298,7 @@ main .section.tabs-booking-cta-container > .default-content-wrapper {
   box-sizing: border-box;
 }
 
-/* Profile icon via pseudo-element (SVG stripped by EDS decoration) */
-main .section.tabs-booking-cta-container > .default-content-wrapper::before {
+main .section.navy .default-content-wrapper::before {
   content: "";
   flex-shrink: 0;
   width: 18px;
@@ -312,8 +308,7 @@ main .section.tabs-booking-cta-container > .default-content-wrapper::before {
   opacity: 0.7;
 }
 
-/* Login text */
-main .section.tabs-booking-cta-container > .default-content-wrapper p {
+main .section.navy .default-content-wrapper p {
   font-family: var(--body-font-family);
   font-size: 14px;
   font-weight: 400;
@@ -322,26 +317,23 @@ main .section.tabs-booking-cta-container > .default-content-wrapper p {
   margin: 0;
 }
 
-/* First paragraph — the login description text */
-main .section.tabs-booking-cta-container > .default-content-wrapper p:first-of-type {
+main .section.navy .default-content-wrapper p:first-of-type {
   flex: 1;
 }
 
-/* "Sign up now" link */
-main .section.tabs-booking-cta-container > .default-content-wrapper p a {
+main .section.navy .default-content-wrapper p a {
   color: rgb(2 84 236);
   font-size: 14px;
   font-weight: 400;
   text-decoration: none;
 }
 
-main .section.tabs-booking-cta-container > .default-content-wrapper p a:hover {
+main .section.navy .default-content-wrapper p a:hover {
   text-decoration: underline;
   color: rgb(2 84 236);
 }
 
-/* "Log in" paragraph — styled as button */
-main .section.tabs-booking-cta-container > .default-content-wrapper p:last-child {
+main .section.navy .default-content-wrapper p:last-child {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -360,6 +352,43 @@ main .section.tabs-booking-cta-container > .default-content-wrapper p:last-child
   line-height: normal;
 }
 
-main .section.tabs-booking-cta-container > .default-content-wrapper p:last-child:hover {
+main .section.navy .default-content-wrapper p:last-child:hover {
   background-color: rgb(28 100 185);
 }
+
+main .section.navy > div {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* ----------------------------------------------------------------
+   Tabs + booking block (below navy bar)
+   ---------------------------------------------------------------- */
+
+main .section.tabs-booking-cta-container {
+  position: relative;
+  z-index: 2;
+  margin-top: -40px; /* overlap gap, sit flush under navy bar */
+  margin-bottom: 0;
+  padding: 0;
+}
+
+/* Reset wrapper constraints */
+main .section.tabs-booking-cta-container > div {
+  max-width: 100%;
+  padding: 0;
+}
+
+@media (width >= 990px){
+  main .section.navy .default-content-wrapper {
+    margin-left: auto;  
+    margin-right: auto; 
+    max-width: 940px;
+  }
+}
+
+@media (width >= 1200px){
+  main .section.navy .default-content-wrapper {
+    max-width:1100px;
+  }
+  }

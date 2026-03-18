@@ -102,3 +102,19 @@
 .hero > div:last-child > div:last-child p {
   margin: 0;
 }
+
+
+@media (width >= 1200px) {
+  .hero > div:last-child {
+    left: calc(50% - var(--max-width-site) / 2 + 32px);
+    padding-left:   0;
+    padding-right: 0;
+  } 
+}
+
+@media (width >= 1200px) {
+  .hero > div:last-child {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
