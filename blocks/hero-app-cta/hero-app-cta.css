@@ -10,6 +10,7 @@
   height: 330px;
   padding: 0;
   overflow: hidden;
+  z-index: 1;
 }
 
 /* Background image - absolute fill */
