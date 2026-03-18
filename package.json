@@ -51,6 +51,7 @@
     "ts-api-utils": "^2.4.0"
   },
   "dependencies": {
-    "lint": "^1.1.2"
+    "lint": "^1.1.2",
+    "playwright": "^1.58.2"
   }
 }
