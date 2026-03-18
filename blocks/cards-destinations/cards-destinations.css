@@ -8,6 +8,7 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
+  margin-left: 40px;
 }
 
 /* "VIEW MORE DEALS" button */
@@ -30,6 +31,7 @@
   background-color: transparent;
   padding: 0;
   margin: 20px 0;
+  margin-left: 40px;
 }
 
 .cards-destinations-container > .default-content-wrapper > p:last-child a:hover {
@@ -46,6 +48,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  padding-right:40px;
+  margin-left: 40px;
 }
 
 /* Card — image with text overlay */
