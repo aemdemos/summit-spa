@@ -270,6 +270,259 @@ function buildSlidePanel(brandNavDiv, toolsDiv, nav) {
   nav.append(slidePanel);
 }
 
+function buildUtilityRow(toolsDiv) {
+  const row = document.createElement('div');
+  row.classList.add('desktop-utility-row');
+
+  const inner = document.createElement('div');
+  inner.classList.add('desktop-utility-inner');
+
+  if (toolsDiv) {
+    const utilityDiv = toolsDiv.querySelector(':scope > div:first-child');
+    if (utilityDiv) {
+      utilityDiv.querySelectorAll('a').forEach((a) => {
+        const link = a.cloneNode(true);
+        link.classList.add('utility-link');
+        inner.append(link);
+      });
+      const localeBtn = utilityDiv.querySelector('.locale-selector');
+      if (localeBtn) {
+        const locale = document.createElement('button');
+        locale.classList.add('utility-locale');
+        locale.textContent = localeBtn.textContent;
+        inner.append(locale);
+      }
+    }
+  }
+
+  row.append(inner);
+  return row;
+}
+
+function buildMegamenuPanel(navItem, index) {
+  const panel = document.createElement('div');
+  panel.classList.add('megamenu');
+  panel.id = `megamenu-${index}`;
+  panel.setAttribute('aria-hidden', 'true');
+  panel.setAttribute('role', 'menu');
+
+  const inner = document.createElement('div');
+  inner.classList.add('megamenu-inner');
+
+  const grid = document.createElement('div');
+  grid.classList.add('megamenu-grid');
+
+  const subList = navItem.querySelector(':scope > ul');
+  if (subList) {
+    subList.querySelectorAll(':scope > li').forEach((cat) => {
+      const col = document.createElement('div');
+      col.classList.add('megamenu-col');
+
+      const catLink = cat.querySelector(':scope > a');
+      if (catLink) {
+        const heading = document.createElement('h3');
+        heading.classList.add('megamenu-heading');
+        const headLink = catLink.cloneNode(true);
+        heading.append(headLink);
+        col.append(heading);
+      }
+
+      const catItems = cat.querySelector(':scope > ul');
+      if (catItems) {
+        const ul = document.createElement('ul');
+        ul.classList.add('megamenu-links');
+        catItems.querySelectorAll(':scope > li').forEach((li) => {
+          const anchor = li.querySelector('a');
+          if (anchor) {
+            const menuLi = document.createElement('li');
+            const a = anchor.cloneNode(true);
+            a.setAttribute('role', 'menuitem');
+            if (a.classList.contains('more-link')) {
+              a.classList.add('megamenu-more');
+              a.textContent = 'More';
+            }
+            menuLi.append(a);
+            ul.append(menuLi);
+          }
+        });
+        col.append(ul);
+      }
+
+      grid.append(col);
+    });
+  }
+
+  inner.append(grid);
+  panel.append(inner);
+  return panel;
+}
+
+function buildDesktopNavLinks(brandNavDiv) {
+  const navLinks = document.createElement('div');
+  navLinks.classList.add('desktop-nav-links');
+
+  if (brandNavDiv) {
+    const navUl = brandNavDiv.querySelector(':scope > div:nth-child(2) > ul');
+    if (navUl) {
+      navUl.querySelectorAll(':scope > li').forEach((item, i) => {
+        const link = item.querySelector(':scope > a');
+        if (!link) return;
+
+        const navItem = document.createElement('div');
+        navItem.classList.add('desktop-nav-item');
+
+        const navLink = document.createElement('a');
+        navLink.classList.add('desktop-nav-link');
+        navLink.href = link.href;
+        navLink.textContent = link.textContent.trim();
+        navLink.setAttribute('aria-expanded', 'false');
+        navLink.setAttribute('aria-controls', `megamenu-${i}`);
+        navItem.append(navLink);
+
+        const hasSubNav = !!item.querySelector(':scope > ul');
+        if (hasSubNav) {
+          navItem.append(buildMegamenuPanel(item, i));
+        }
+
+        navLinks.append(navItem);
+      });
+    }
+  }
+
+  return navLinks;
+}
+
+function buildDesktopRight(toolsDiv) {
+  const right = document.createElement('div');
+  right.classList.add('desktop-right');
+
+  if (toolsDiv) {
+    const actionsDiv = toolsDiv.querySelector(':scope > div:nth-child(2)');
+    if (actionsDiv) {
+      const searchBtn = actionsDiv.querySelector('.search-toggle');
+      if (searchBtn) {
+        const search = document.createElement('button');
+        search.classList.add('desktop-search');
+        search.setAttribute('aria-label', 'Search');
+        const searchIcon = document.createElement('span');
+        searchIcon.classList.add('search-icon');
+        search.append(searchIcon);
+        right.append(search);
+      }
+
+      const auth = document.createElement('div');
+      auth.classList.add('desktop-auth');
+
+      const loginBtn = actionsDiv.querySelector('.login-btn');
+      if (loginBtn) {
+        const login = document.createElement('button');
+        login.classList.add('desktop-login');
+        login.textContent = loginBtn.textContent;
+        auth.append(login);
+      }
+
+      const sep = document.createElement('span');
+      sep.classList.add('desktop-auth-sep');
+      sep.textContent = '|';
+      auth.append(sep);
+
+      const signUpLink = actionsDiv.querySelector('a[href*="registration"]');
+      if (signUpLink) {
+        const signup = signUpLink.cloneNode(true);
+        signup.classList.add('desktop-signup');
+        auth.append(signup);
+      }
+
+      right.append(auth);
+    }
+  }
+
+  return right;
+}
+
+function buildDesktopHeader(brandNavDiv, toolsDiv) {
+  const desktop = document.createElement('div');
+  desktop.classList.add('desktop-header');
+
+  desktop.append(buildUtilityRow(toolsDiv));
+
+  const mainRow = document.createElement('div');
+  mainRow.classList.add('desktop-main-row');
+
+  const mainInner = document.createElement('div');
+  mainInner.classList.add('desktop-main-inner');
+
+  // Logo
+  if (brandNavDiv) {
+    const logoDiv = brandNavDiv.querySelector(':scope > div:first-child');
+    if (logoDiv) {
+      const logoLink = logoDiv.querySelector('a');
+      if (logoLink) {
+        const logo = logoLink.cloneNode(true);
+        logo.classList.add('desktop-logo');
+        mainInner.append(logo);
+      }
+    }
+  }
+
+  mainInner.append(buildDesktopNavLinks(brandNavDiv));
+  mainInner.append(buildDesktopRight(toolsDiv));
+
+  mainRow.append(mainInner);
+  desktop.append(mainRow);
+  return desktop;
+}
+
+function attachMegamenuBehavior(desktopHeader) {
+  const navItems = desktopHeader.querySelectorAll('.desktop-nav-item');
+  let closeTimeout = null;
+
+  const overlay = document.createElement('div');
+  overlay.classList.add('megamenu-overlay');
+  document.body.append(overlay);
+
+  function closeAllMenus() {
+    navItems.forEach((item) => {
+      const link = item.querySelector('.desktop-nav-link');
+      const menu = item.querySelector('.megamenu');
+      if (link) link.setAttribute('aria-expanded', 'false');
+      if (menu) menu.setAttribute('aria-hidden', 'true');
+    });
+    overlay.classList.remove('active');
+  }
+
+  function openMenu(item) {
+    if (closeTimeout) clearTimeout(closeTimeout);
+    closeAllMenus();
+    const link = item.querySelector('.desktop-nav-link');
+    const menu = item.querySelector('.megamenu');
+    if (link) link.setAttribute('aria-expanded', 'true');
+    if (menu) {
+      menu.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('active');
+    }
+  }
+
+  function scheduleClose() {
+    closeTimeout = setTimeout(closeAllMenus, 150);
+  }
+
+  navItems.forEach((item) => {
+    item.addEventListener('mouseenter', () => openMenu(item));
+    item.addEventListener('mouseleave', scheduleClose);
+    item.addEventListener('focusin', () => openMenu(item));
+    item.addEventListener('focusout', (e) => {
+      if (!item.contains(e.relatedTarget)) scheduleClose();
+    });
+  });
+
+  overlay.addEventListener('click', closeAllMenus);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape') closeAllMenus();
+  });
+}
+
 /**
  * loads and decorates the header
  * @param {Element} block The header block element
@@ -295,6 +548,11 @@ export default async function decorate(block) {
 
   nav.append(buildHeaderBar(brandNavDiv, nav));
   buildSlidePanel(brandNavDiv, toolsDiv, nav);
+
+  // Desktop horizontal nav (>= 1080px)
+  const desktopHeader = buildDesktopHeader(brandNavDiv, toolsDiv);
+  nav.append(desktopHeader);
+  attachMegamenuBehavior(desktopHeader);
 
   // Overlay (behind panel)
   const overlay = document.createElement('div');

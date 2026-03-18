@@ -79,6 +79,12 @@
   }
 }
 
+@media (width >= 1080px) {
+  :root {
+    --nav-height: 81px;
+  }
+}
+
 body {
   display: none;
   margin: 0;

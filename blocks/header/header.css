@@ -170,11 +170,11 @@ header nav[aria-expanded='true'] .toggle-icon::after {
 
 /* ==================== SLIDE-OUT PANEL ==================== */
 header .slide-panel {
-  position: absolute;
+  position: fixed;
   top: 60px;
   right: 0;
   width: 348px;
-  max-height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
   overflow-y: auto;
   background: linear-gradient(270deg, #004EA4 0%, #002B78 100%);
   z-index: 8;
@@ -543,5 +543,348 @@ body.nav-open {
 
   header .nav-brand img {
     width: 64px;
+  }
+}
+
+/* ==================== DESKTOP HEADER (>= 1080px) ==================== */
+
+/* Hidden by default (mobile-first) */
+header .desktop-header {
+  display: none;
+}
+
+.megamenu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgb(0 0 0 / 50%);
+  z-index: 45;
+}
+
+.megamenu-overlay.active {
+  display: block;
+}
+
+@media (width >= 1080px) {
+  /* Hide mobile elements */
+  header .header-bar {
+    display: none;
+  }
+
+  header .slide-panel {
+    display: none !important;
+  }
+
+  header nav .nav-overlay {
+    display: none !important;
+  }
+
+  /* Show desktop header */
+  header .desktop-header {
+    display: block;
+  }
+
+  /* --- Utility row --- */
+  header .desktop-utility-row {
+    display: flex;
+    justify-content: flex-end;
+    height: 31px;
+    padding: 0 20px;
+  }
+
+  header .desktop-utility-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    justify-content: flex-end;
+  }
+
+  header .utility-link {
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+  }
+
+  header .utility-link:hover {
+    color: #f99f1c;
+  }
+
+  header .utility-locale {
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--body-font-family);
+  }
+
+  header .utility-locale:hover {
+    color: #f99f1c;
+  }
+
+  /* --- Main row --- */
+  header .desktop-main-row {
+    display: flex;
+    height: 50px;
+    padding: 0 20px;
+  }
+
+  header .desktop-main-inner {
+    display: flex;
+    align-items: center;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    gap: 32px;
+  }
+
+  /* Logo */
+  header .desktop-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  header .desktop-logo img {
+    width: 124px;
+    height: 46px;
+  }
+
+  /* --- Nav links --- */
+  header .desktop-nav-links {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  header .desktop-nav-item {
+    position: static;
+  }
+
+  header .desktop-nav-link {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  header .desktop-nav-link:hover,
+  header .desktop-nav-link[aria-expanded='true'] {
+    color: #f99f1c;
+  }
+
+  /* --- Desktop right (search + auth) --- */
+  header .desktop-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Search icon (CSS-only magnifying glass) */
+  header .desktop-search {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  header .desktop-search:hover {
+    color: #f99f1c;
+  }
+
+  header .search-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    position: relative;
+  }
+
+  header .search-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid currentcolor;
+    border-radius: 50%;
+  }
+
+  header .search-icon::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 6px;
+    height: 1.5px;
+    background: currentcolor;
+    transform: rotate(45deg);
+    transform-origin: bottom right;
+  }
+
+  header .desktop-auth {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  header .desktop-login {
+    font-size: 13px;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--body-font-family);
+  }
+
+  header .desktop-login:hover {
+    color: #f99f1c;
+  }
+
+  header .desktop-auth-sep {
+    color: rgb(255 255 255 / 40%);
+    font-size: 13px;
+  }
+
+  header .desktop-signup {
+    font-size: 13px;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+  }
+
+  header .desktop-signup:hover {
+    color: #f99f1c;
+  }
+
+  /* --- Megamenu --- */
+  header .megamenu {
+    position: absolute;
+    top: 81px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 50;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+    display: none;
+  }
+
+  header .megamenu[aria-hidden='false'] {
+    display: block;
+  }
+
+  header .megamenu-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+
+  header .megamenu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px 32px;
+  }
+
+  header .megamenu-heading {
+    font-size: 16px;
+    font-weight: 600;
+    color: #00266b;
+    margin: 0 0 12px;
+    font-family: var(--body-font-family);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  header .megamenu-heading a {
+    color: #00266b;
+    text-decoration: none;
+  }
+
+  header .megamenu-heading a:hover {
+    text-decoration: underline;
+  }
+
+  header .megamenu-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  header .megamenu-links li {
+    margin: 0;
+    padding: 0;
+  }
+
+  header .megamenu-links a {
+    display: block;
+    padding: 4px 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    text-decoration: none;
+  }
+
+  header .megamenu-links a:hover {
+    color: #00266b;
+  }
+
+  /* "More" link with chevron */
+  header .megamenu-links a.megamenu-more {
+    color: #00266b;
+    font-weight: 500;
+  }
+
+  header .megamenu-links a.megamenu-more::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid #00266b;
+    border-bottom: 1.5px solid #00266b;
+    transform: rotate(-45deg);
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  header .megamenu-links a.megamenu-more:hover {
+    color: #f99f1c;
+  }
+
+  header .megamenu-links a.megamenu-more:hover::after {
+    border-color: #f99f1c;
   }
 }
