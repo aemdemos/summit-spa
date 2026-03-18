@@ -41,7 +41,7 @@
 .hero-app-cta h4,
 .hero-app-cta h5,
 .hero-app-cta h6 {
-  font-family: sigvar;
+  font-family: sigvar, Georgia, Arial, Helvetica, sans-serif;
   font-size: 26px;
   font-weight: 400;
   color: #fefefe;
@@ -126,9 +126,23 @@
 /* Desktop+ */
 @media (width >= 900px) {
   .hero-app-cta > div:last-child {
-    left: 50px;
+  padding-left:40px;
     position: absolute;
     top: 45%;
     transform: translateY(-50%);
   }
+}
+
+/* Wide - align with centered content (max-width 1200px + 32px padding) */
+@media (width >= 1200px) {
+  .hero-app-cta > div:last-child {
+    left: calc(50% - var(--max-width-site) / 2 + 32px);
+    padding-left: 40px;
+  }
+}
+
+@media (width >= 1250px) {
+  .hero-app-cta > div:last-child {
+  padding-left:0;
+}
 }
