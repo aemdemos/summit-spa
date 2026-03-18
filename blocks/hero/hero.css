@@ -41,12 +41,13 @@
 
 /* Text overlay */
 .hero > div:last-child {
-  position: absolute;
   z-index: 1;
-  bottom: 50%;
+  bottom: 0;
   transform: translateY(50%);
   left: var(--hero-text-left);
   max-width: 500px;
+  position: relative;
+  align-self: flex-start;
 }
 
 /* Heading */
@@ -103,18 +104,18 @@
   margin: 0;
 }
 
-
-@media (width >= 1200px) {
+@media (width >= 900px) {
   .hero > div:last-child {
-    left: calc(50% - var(--max-width-site) / 2 + 32px);
-    padding-left:   0;
-    padding-right: 0;
-  } 
+    padding-left: 20px;
+    padding-right: 20px;
+
+  }
 }
 
 @media (width >= 1200px) {
   .hero > div:last-child {
+    left: calc(50% - var(--max-width-site) / 2 + 32px);
     padding-left: 20px;
     padding-right: 20px;
-  }
+  } 
 }
