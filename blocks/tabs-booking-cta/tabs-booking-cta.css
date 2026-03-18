@@ -445,3 +445,120 @@
   background: #f0f4fa;
 }
 
+/* ═══════════════════════════════════════════
+   Responsive breakpoints
+   ═══════════════════════════════════════════ */
+
+/* --- Below 768px: mobile layout --- */
+@media (width < 768px) {
+  .tabs-booking-cta {
+    max-width: 100%;
+  }
+
+  .tabs-booking-cta-container .tabs-booking-cta-wrapper {
+    background: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 70%) 0,
+      rgb(0 0 0 / 70%) 50px,
+      #fff 50px
+    );
+  }
+
+  .tabs-booking-cta-tabs {
+    height: 50px;
+  }
+
+  .tabs-booking-cta-tab {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    padding: 0 4px;
+    height: 50px;
+  }
+
+  .tabs-booking-cta-panel {
+    padding: 16px;
+  }
+
+  .tabs-booking-cta-form-header h2 {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  /* Form rows: single column on mobile */
+  .tabs-booking-cta-form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tabs-booking-cta-form-row > :not(:first-child) {
+    margin-left: 0;
+    margin-top: -1px;
+  }
+
+  /* Swap button: horizontal separator between stacked fields */
+  .tabs-booking-cta-field-swap {
+    min-height: 28px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+  }
+
+  /* Options row: stack vertically */
+  .tabs-booking-cta-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Form links: allow wrapping */
+  .tabs-booking-cta-form-links {
+    flex-wrap: wrap;
+  }
+
+  /* Search button: full width */
+  .tabs-booking-cta-search-btn,
+  .tabs-booking-cta-search-btn.button {
+    width: 100%;
+    margin-top: -1px;
+  }
+
+  /* Radios: tighter gap */
+  .tabs-booking-cta-form-radios {
+    gap: 16px;
+  }
+
+  /* Info notice: smaller font */
+  .tabs-booking-cta-form-info {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+}
+
+/* --- 576px+ (larger phones) --- */
+@media (width >= 576px) and (width < 768px) {
+  .tabs-booking-cta-tab {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+  }
+
+  .tabs-booking-cta-panel {
+    padding: 20px 24px;
+  }
+
+  .tabs-booking-cta-form-header h2 {
+    font-size: 18px;
+  }
+}
+
+/* --- 992px+ (large screens) --- */
+@media (width >= 992px) {
+  .tabs-booking-cta {
+    max-width: 960px;
+  }
+}
+
+/* --- 1200px+ (wide screens) --- */
+@media (width >= 1200px) {
+  .tabs-booking-cta {
+    max-width: 1080px;
+  }
+}
+
