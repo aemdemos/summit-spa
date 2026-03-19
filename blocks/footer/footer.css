@@ -9,10 +9,7 @@
   footer .footer {
     padding: 0;
   }
-  
-  footer .footer > div {
-    max-width: none;
-  }
+
   
   footer .footer .footer-wrapper,
   footer .footer .default-content-wrapper {
@@ -66,7 +63,7 @@
     border: none;
     background: none;
     cursor: pointer;
-    font-family: var(--body-font-family);
+    font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #222;
@@ -381,16 +378,21 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 40px;
-      padding: 40px 80px;
+     margin: 0 auto;
+      max-width: 1080px;
+      padding: 3rem 0 30px;
     }
   
     footer .footer-nav-column {
       border-bottom: none;
+      margin-bottom: 0;
     }
   
     footer .footer-nav-header {
       cursor: default;
-      padding: 0 0 15px;
+      margin:0;
+      margin-bottom: 10px;
+      -webkit-font-smoothing: antialiased;
     }
   
     footer .footer-chevron {
@@ -402,6 +404,12 @@
       overflow: visible;
     }
   
+    footer .footer-nav-content a {
+      -webkit-font-smoothing: antialiased;
+      padding:6px 0;
+      font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
+    }
+    
     footer .footer-nav-content ul {
       padding: 0;
     }
@@ -413,7 +421,10 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 20px;
-      padding: 40px 80px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding-bottom: 15px;
+;
     }
   
     footer .footer-awards-left {
@@ -423,6 +434,10 @@
     footer .footer-awards {
       margin-bottom: 0;
     }
+
+    footer .footer-awards img {
+      margin: 0px 30px 30px 0px; 
+    } 
   
     footer .footer-app-stores {
       display: none;
