@@ -427,24 +427,29 @@
     /* Legal + social: horizontal row at desktop */
     footer .footer-legal-row {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       text-align: left;
     }
-  
+
     footer .footer-legal-links {
       justify-content: flex-start;
       margin-bottom: 0;
+      order: 1;
     }
-  
+
     footer .footer-social {
       justify-content: flex-end;
       padding: 0;
       flex-shrink: 0;
+      order: 2;
     }
-  
+
     footer .footer-disclaimer {
       text-align: left;
       margin: 10px 0 40px;
+      order: 3;
+      width: 100%;
     }
   }

@@ -266,21 +266,7 @@ function buildBottomSection(section) {
   }
   legalRow.append(legalLinks);
 
-  // Social links: all <a><img> paragraphs after the disclaimer
-  const socialParagraphs = disclaimerIdx >= 0 ? paragraphs.slice(disclaimerIdx + 1) : [];
-  if (socialParagraphs.length) {
-    const socialRow = document.createElement('div');
-    socialRow.classList.add('footer-social');
-    socialParagraphs.forEach((p) => {
-      p.querySelectorAll('a').forEach((link) => {
-        socialRow.append(createLinkedImage(link, { ariaLabel: true }));
-      });
-    });
-    legalRow.append(socialRow);
-  }
-  bottom.append(legalRow);
-
-  // --- Disclaimer ---
+  // Disclaimer (placed between legal links and social icons on mobile)
   if (disclaimerIdx >= 0) {
     const disclaimer = document.createElement('p');
     disclaimer.classList.add('footer-disclaimer');
@@ -303,8 +289,22 @@ function buildBottomSection(section) {
     } else {
       disclaimer.textContent = sourceP.textContent.trim();
     }
-    bottom.append(disclaimer);
+    legalRow.append(disclaimer);
   }
+
+  // Social links: all <a><img> paragraphs after the disclaimer
+  const socialParagraphs = disclaimerIdx >= 0 ? paragraphs.slice(disclaimerIdx + 1) : [];
+  if (socialParagraphs.length) {
+    const socialRow = document.createElement('div');
+    socialRow.classList.add('footer-social');
+    socialParagraphs.forEach((p) => {
+      p.querySelectorAll('a').forEach((link) => {
+        socialRow.append(createLinkedImage(link, { ariaLabel: true }));
+      });
+    });
+    legalRow.append(socialRow);
+  }
+  bottom.append(legalRow);
 
   return bottom;
 }
