@@ -358,4 +358,10 @@ export default async function decorate(block) {
   if (sections[3]) {
     block.append(buildBottomSection(sections[3]));
   }
+
+  // Decorative batik pattern at the very bottom
+  const batik = document.createElement('div');
+  batik.classList.add('footer-batik');
+  batik.setAttribute('aria-hidden', 'true');
+  block.append(batik);
 }
