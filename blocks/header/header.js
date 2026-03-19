@@ -52,12 +52,49 @@ function findToolElements(toolsDiv) {
     loginText: null,
     signUpLink: null,
     hasSearch: false,
+    alertBadge: null,
+    chatLabel: null,
   };
   if (!toolsDiv) return result;
 
   result.helpLink = toolsDiv.querySelector('a[href*="help"]');
   result.feedbackLink = toolsDiv.querySelector('a[href*="feedback"]');
   result.signUpLink = toolsDiv.querySelector('a[href*="registration"]');
+
+  // Alert bell: try class first, then DA text pattern (:alert: or :bell:)
+  const alertBtn = toolsDiv.querySelector('.alert-btn');
+  if (alertBtn) {
+    result.alertBadge = alertBtn.textContent.trim();
+  } else {
+    toolsDiv.querySelectorAll('p').forEach((p) => {
+      if (result.alertBadge !== null) return;
+      const raw = p.textContent.trim().toLowerCase();
+      if (raw.includes(':alert:') || raw.includes(':bell:')) {
+        const clean = extractText(p.textContent.trim())
+          .replace(/:alert:/gi, '')
+          .replace(/:bell:/gi, '')
+          .trim();
+        result.alertBadge = clean;
+      }
+    });
+  }
+
+  // Chat: try class first, then DA text pattern (:chat:)
+  const chatBtnEl = toolsDiv.querySelector('.chat-btn');
+  if (chatBtnEl) {
+    result.chatLabel = chatBtnEl.textContent.trim();
+  } else {
+    toolsDiv.querySelectorAll('p').forEach((p) => {
+      if (result.chatLabel) return;
+      const raw = p.textContent.trim().toLowerCase();
+      if (raw.includes(':chat:')) {
+        const clean = extractText(p.textContent.trim())
+          .replace(/:chat:/gi, '')
+          .trim();
+        result.chatLabel = clean || 'Chat';
+      }
+    });
+  }
 
   // Locale: try class first, then text pattern (handles DA-escaped <button> tags)
   const localeBtn = toolsDiv.querySelector('.locale-selector');
@@ -278,16 +315,13 @@ function buildPanelBottom(toolsDiv) {
   if (tools.loginText) {
     const login = document.createElement('button');
     login.classList.add('panel-login');
-    login.textContent = 'Log in';
-    login.setAttribute('aria-label', 'Log in to access your account');
+    login.textContent = tools.loginText;
     authDiv.append(login);
   }
 
   if (tools.signUpLink) {
     const signup = tools.signUpLink.cloneNode(true);
     signup.classList.add('panel-signup');
-    signup.textContent = 'Sign Up';
-    signup.setAttribute('aria-label', 'Sign up for a new account');
     authDiv.append(signup);
   }
   panelBottom.append(authDiv);
@@ -371,19 +405,77 @@ function buildUtilityRow(toolsDiv) {
   inner.classList.add('desktop-utility-inner');
 
   const tools = findToolElements(toolsDiv);
-  [tools.helpLink, tools.feedbackLink].forEach((a) => {
-    if (a) {
-      const link = a.cloneNode(true);
-      link.classList.add('utility-link');
-      inner.append(link);
+  const items = [];
+
+  // Alert bell — only if authored in nav content
+  if (tools.alertBadge !== null) {
+    const alertBtn = document.createElement('button');
+    alertBtn.classList.add('utility-alert');
+    alertBtn.setAttribute('aria-label', 'News alerts');
+    const alertIcon = document.createElement('span');
+    alertIcon.classList.add('alert-icon');
+    alertBtn.append(alertIcon);
+    if (tools.alertBadge) {
+      const badge = document.createElement('span');
+      badge.classList.add('alert-badge');
+      badge.textContent = tools.alertBadge;
+      alertBtn.append(badge);
     }
-  });
+    items.push(alertBtn);
+  }
+
+  // Chat button — only if authored in nav content
+  if (tools.chatLabel) {
+    const chatBtn = document.createElement('button');
+    chatBtn.classList.add('utility-chat');
+    chatBtn.setAttribute('aria-label', tools.chatLabel);
+    const chatIcon = document.createElement('span');
+    chatIcon.classList.add('chat-icon');
+    chatBtn.append(chatIcon);
+    const chatLabelSpan = document.createElement('span');
+    chatLabelSpan.textContent = tools.chatLabel;
+    chatBtn.append(chatLabelSpan);
+    items.push(chatBtn);
+  }
+
+  // Help link
+  if (tools.helpLink) {
+    const link = tools.helpLink.cloneNode(true);
+    link.classList.add('utility-link');
+    items.push(link);
+  }
+
+  // Feedback link
+  if (tools.feedbackLink) {
+    const link = tools.feedbackLink.cloneNode(true);
+    link.classList.add('utility-link');
+    items.push(link);
+  }
+
+  // Locale with globe icon
   if (tools.localeText) {
     const locale = document.createElement('button');
     locale.classList.add('utility-locale');
-    locale.textContent = tools.localeText;
-    inner.append(locale);
+    const globe = document.createElement('span');
+    globe.classList.add('globe-icon');
+    locale.append(globe);
+    const localeLabel = document.createElement('span');
+    localeLabel.textContent = tools.localeText;
+    locale.append(localeLabel);
+    items.push(locale);
   }
+
+  // Append items with separators between them
+  items.forEach((item, i) => {
+    inner.append(item);
+    if (i < items.length - 1) {
+      const sep = document.createElement('span');
+      sep.classList.add('utility-sep');
+      sep.setAttribute('aria-hidden', 'true');
+      sep.textContent = '|';
+      inner.append(sep);
+    }
+  });
 
   row.append(inner);
   return row;
