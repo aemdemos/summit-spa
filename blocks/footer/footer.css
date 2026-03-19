@@ -73,6 +73,8 @@
     letter-spacing: 1.5px;
     text-transform: uppercase;
     text-align: left;
+    line-height:12px;
+    -webkit-font-smoothing: antialiased;
   }
   
   footer .footer-chevron {
