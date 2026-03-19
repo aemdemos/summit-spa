@@ -436,7 +436,7 @@
     }
 
     footer .footer-awards img {
-      margin: 0px 30px 30px 0px; 
+      margin: 0 30px 30px 0; 
     } 
   
     footer .footer-app-stores {
@@ -448,7 +448,8 @@
     }
   
     footer .footer-bottom {
-      padding: 20px 80px;
+      max-width: 1080px;
+      margin: 12px auto;
     }
   
     /* Logos: horizontal row at desktop */
@@ -456,7 +457,7 @@
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 0 20px;
+      padding: 15px 0 0;
     }
   
     footer .footer-airline-logos {
@@ -474,6 +475,7 @@
       align-items: center;
       justify-content: space-between;
       text-align: left;
+      padding: 0;
     }
 
     footer .footer-legal-links {
@@ -487,11 +489,12 @@
       padding: 0;
       flex-shrink: 0;
       order: 2;
+      margin-top: 0;
     }
 
     footer .footer-disclaimer {
       text-align: left;
-      margin: 10px 0 40px;
+      margin: 0 0 40px;
       order: 3;
       width: 100%;
     }
