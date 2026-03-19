@@ -14,6 +14,18 @@ function findLogoLink(brandNavDiv) {
   return [...brandNavDiv.querySelectorAll('a')].find((a) => a.querySelector('img')) || null;
 }
 
+function findItemLink(li) {
+  // Direct <a> child (standard EDS)
+  const direct = li.querySelector(':scope > a');
+  if (direct) return direct;
+  // <p>-wrapped <a> (some DA renderers)
+  const wrapped = li.querySelector(':scope > p > a');
+  if (wrapped) return wrapped;
+  // Any <a> not inside a nested <ul> (last resort)
+  const nested = li.querySelector(':scope > ul');
+  return [...li.querySelectorAll('a')].find((a) => !nested || !nested.contains(a)) || null;
+}
+
 function findMainNavList(brandNavDiv) {
   if (!brandNavDiv) return null;
   // Handcrafted: inside second child div
@@ -21,6 +33,15 @@ function findMainNavList(brandNavDiv) {
   if (nested) return nested;
   // DA flat: direct child UL
   return brandNavDiv.querySelector(':scope > ul') || brandNavDiv.querySelector('ul');
+}
+
+function extractText(raw) {
+  // Extract readable text from strings that may contain escaped HTML tags
+  // e.g., "<button class='x'>Hello</button>" → "Hello"
+  return raw.split('<').map((part) => {
+    const idx = part.indexOf('>');
+    return idx >= 0 ? part.substring(idx + 1) : part;
+  }).join('').trim();
 }
 
 function findToolElements(toolsDiv) {
@@ -38,37 +59,46 @@ function findToolElements(toolsDiv) {
   result.feedbackLink = toolsDiv.querySelector('a[href*="feedback"]');
   result.signUpLink = toolsDiv.querySelector('a[href*="registration"]');
 
-  // Locale: try class first, then text pattern
+  // Locale: try class first, then text pattern (handles DA-escaped <button> tags)
   const localeBtn = toolsDiv.querySelector('.locale-selector');
   if (localeBtn) {
     result.localeText = localeBtn.textContent.trim();
   } else {
     toolsDiv.querySelectorAll('p').forEach((p) => {
-      const text = p.textContent.trim();
-      if (!result.localeText && !p.querySelector('a') && text.includes('\u00B7')) {
-        result.localeText = text;
+      if (result.localeText) return;
+      const raw = p.textContent.trim();
+      const clean = extractText(raw);
+      if (!p.querySelector('a') && clean.includes('\u00B7')) {
+        result.localeText = clean;
       }
     });
   }
 
-  // Login: try class first, then text match
+  // Login: try class first, then text match (handles DA-escaped tags)
   const loginBtn = toolsDiv.querySelector('.login-btn');
   if (loginBtn) {
     result.loginText = loginBtn.textContent.trim();
   } else {
     toolsDiv.querySelectorAll('p').forEach((p) => {
-      const text = p.textContent.trim();
-      if (!result.loginText && text.toLowerCase().replace(/[-\s]/g, '') === 'login' && !p.querySelector('a')) {
-        result.loginText = text;
+      if (result.loginText) return;
+      const raw = p.textContent.trim();
+      const clean = extractText(raw);
+      const normalized = clean.toLowerCase().replace(/[-\s]/g, '');
+      if (normalized === 'login' && !p.querySelector('a')) {
+        result.loginText = clean;
       }
     });
   }
 
-  // Search: class or icon
+  // Search: class, icon element, or DA-escaped text containing search/icon-search
   result.hasSearch = !!(
     toolsDiv.querySelector('.search-toggle')
     || toolsDiv.querySelector('.icon-search')
     || toolsDiv.querySelector('.icon.icon-search')
+    || [...toolsDiv.querySelectorAll('p')].find((p) => {
+      const text = p.textContent.toLowerCase();
+      return text.includes('icon-search') || text.includes(':search:');
+    })
   );
 
   return result;
@@ -116,7 +146,7 @@ function buildSubNavPanel(navItem, label) {
       const catGroup = document.createElement('div');
       catGroup.classList.add('subnav-category');
 
-      const catLink = cat.querySelector(':scope > a');
+      const catLink = findItemLink(cat);
       const catItems = cat.querySelector(':scope > ul');
 
       if (catLink && catItems) {
@@ -296,7 +326,7 @@ function buildSlidePanel(brandNavDiv, toolsDiv, nav) {
   const navUl = findMainNavList(brandNavDiv);
   if (navUl) {
     navUl.querySelectorAll(':scope > li').forEach((item) => {
-      const link = item.querySelector(':scope > a');
+      const link = findItemLink(item);
       if (!link) return;
 
       const label = link.textContent.trim();
@@ -378,7 +408,7 @@ function buildMegamenuPanel(navItem, index) {
       const col = document.createElement('div');
       col.classList.add('megamenu-col');
 
-      const catLink = cat.querySelector(':scope > a');
+      const catLink = findItemLink(cat);
       if (catLink) {
         const heading = document.createElement('h3');
         heading.classList.add('megamenu-heading');
@@ -424,7 +454,7 @@ function buildDesktopNavLinks(brandNavDiv) {
   const navUl = findMainNavList(brandNavDiv);
   if (navUl) {
     navUl.querySelectorAll(':scope > li').forEach((item, i) => {
-      const link = item.querySelector(':scope > a');
+      const link = findItemLink(item);
       if (!link) return;
 
       const navItem = document.createElement('div');
