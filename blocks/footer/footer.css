@@ -12,16 +12,28 @@ footer .footer {
 
 footer .footer > div {
   max-width: none;
+}
+
+footer .footer .footer-wrapper,
+footer .footer .default-content-wrapper {
+  max-width: none;
   padding: 0;
 }
 
 /* ===== Back to top ===== */
 
+footer .footer-back-to-top-wrapper {
+  position: relative;
+}
+
 footer .footer-back-to-top {
   display: block;
   width: 60px;
   height: 60px;
-  margin: 0 auto;
+  position: absolute;
+  top: -30px;
+  right: 20px;
+  z-index: 1;
   padding: 0;
   border: none;
   background: url("https://www.singaporeair.com/assets/images/svg/icons/chevron-circle-grey.svg") no-repeat center / contain;

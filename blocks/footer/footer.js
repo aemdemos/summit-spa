@@ -331,15 +331,18 @@ export default async function decorate(block) {
 
   const sections = [...temp.children];
 
-  // Section 0: Back to top
+  // Section 0 + 1: Back to top button + Nav columns
+  // Wrap in a relative container so the back-to-top button can be
+  // absolutely positioned at the top-right (matching the original site).
+  const topWrapper = document.createElement('div');
+  topWrapper.classList.add('footer-back-to-top-wrapper');
   if (sections[0]) {
-    block.append(buildBackToTop(sections[0]));
+    topWrapper.append(buildBackToTop(sections[0]));
   }
-
-  // Section 1: Nav columns (accordion)
   if (sections[1]) {
-    block.append(buildNavColumns(sections[1]));
+    topWrapper.append(buildNavColumns(sections[1]));
   }
+  block.append(topWrapper);
 
   // Section 2: Awards + signup CTA
   if (sections[2]) {
