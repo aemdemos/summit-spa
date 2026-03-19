@@ -1,7 +1,9 @@
 see @AGENTS.md
 
 ## VERY IMPORTANT!!!
-During the creation of the needed blocks, you are free to build new blocks from scratch, as needed for each page that is being migrated, but you are NEVER to reuse the default boilerplate block library at all. Everything will be created from scratch, using your knowledge, to perfectly match the source page. The soruce pages are the ultimate source of truth for how blocks and their styles are created. Later, only these blocks created from scratch that are based on the source pages are reusable in other places/pages, but never reuse the default boilerplate blocks. 
+During the creation of the needed blocks, you are free to build new blocks from scratch, as needed for each page that is being migrated, but you are NEVER to reuse the default boilerplate block library at all. Everything will be created from scratch, using your knowledge, to perfectly match the source page. The soruce pages are the ultimate source of truth for how blocks and their styles are created. Later, only these blocks created from scratch that are based on the source pages are reusable in other places/pages, but never reuse the default boilerplate blocks.
+
+**Authorable content, never hardcoded:** Migrated content must remain authorable. Do NOT hardcode user-facing content (labels, links, messages, tab names, etc.) in `.js` files. Content should come from docs, `content/*.md`, section metadata, or data attributes so authors can edit it. Block JS handles structure, behavior, and wiring—not authored text. Use `content/*.md`, metadata, data attributes, or shared config objects (e.g. `content/nav.md` for header).
 
 ## Custom Skills
 
