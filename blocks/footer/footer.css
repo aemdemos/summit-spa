@@ -329,11 +329,22 @@ footer .footer-social img {
 /* ===== Tablet (768+) ===== */
 
 @media (width >= 768px) {
+  /* Awards images switch to row at tablet, but stay centered */
+  footer .footer-awards {
+    flex-direction: row;
+    gap: 20px;
+  }
+}
+
+/* ===== Desktop (1182+) ===== */
+
+@media (width >= 1182px) {
+  /* Nav: switch from accordion to 4-column grid */
   footer .footer-nav {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 30px 40px;
+    gap: 40px;
+    padding: 40px 80px;
   }
 
   footer .footer-nav-column {
@@ -358,13 +369,14 @@ footer .footer-social img {
     padding: 0;
   }
 
+  /* Awards: horizontal with CTA on right */
   footer .footer-awards-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 20px;
-    padding: 30px 40px;
+    padding: 40px 80px;
   }
 
   footer .footer-awards-left {
@@ -372,8 +384,6 @@ footer .footer-social img {
   }
 
   footer .footer-awards {
-    flex-direction: row;
-    gap: 20px;
     margin-bottom: 0;
   }
 
@@ -383,23 +393,6 @@ footer .footer-social img {
 
   footer .footer-signup {
     text-align: right;
-  }
-
-  footer .footer-bottom {
-    padding: 20px 40px;
-  }
-}
-
-/* ===== Desktop (1182+) ===== */
-
-@media (width >= 1182px) {
-  footer .footer-nav {
-    padding: 40px 80px;
-    gap: 40px;
-  }
-
-  footer .footer-awards-row {
-    padding: 40px 80px;
   }
 
   footer .footer-bottom {
