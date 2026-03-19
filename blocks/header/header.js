@@ -61,16 +61,17 @@ function findToolElements(toolsDiv) {
   result.feedbackLink = toolsDiv.querySelector('a[href*="feedback"]');
   result.signUpLink = toolsDiv.querySelector('a[href*="registration"]');
 
-  // Alert bell: try class first, then DA text pattern (:alert: or :bell:)
+  // Alert bell: try class first, then DA-escaped button text
   const alertBtn = toolsDiv.querySelector('.alert-btn');
   if (alertBtn) {
     result.alertBadge = alertBtn.textContent.trim();
   } else {
     toolsDiv.querySelectorAll('p').forEach((p) => {
       if (result.alertBadge !== null) return;
-      const raw = p.textContent.trim().toLowerCase();
-      if (raw.includes(':alert:') || raw.includes(':bell:')) {
-        const clean = extractText(p.textContent.trim())
+      const raw = p.textContent.trim();
+      const lower = raw.toLowerCase();
+      if (lower.includes('alert-btn') || lower.includes(':alert:') || lower.includes(':bell:')) {
+        const clean = extractText(raw)
           .replace(/:alert:/gi, '')
           .replace(/:bell:/gi, '')
           .trim();
@@ -79,16 +80,17 @@ function findToolElements(toolsDiv) {
     });
   }
 
-  // Chat: try class first, then DA text pattern (:chat:)
+  // Chat: try class first, then DA-escaped button text
   const chatBtnEl = toolsDiv.querySelector('.chat-btn');
   if (chatBtnEl) {
     result.chatLabel = chatBtnEl.textContent.trim();
   } else {
     toolsDiv.querySelectorAll('p').forEach((p) => {
       if (result.chatLabel) return;
-      const raw = p.textContent.trim().toLowerCase();
-      if (raw.includes(':chat:')) {
-        const clean = extractText(p.textContent.trim())
+      const raw = p.textContent.trim();
+      const lower = raw.toLowerCase();
+      if (lower.includes('chat-btn') || lower.includes(':chat:')) {
+        const clean = extractText(raw)
           .replace(/:chat:/gi, '')
           .trim();
         result.chatLabel = clean || 'Chat';
