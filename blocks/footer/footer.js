@@ -22,6 +22,7 @@ function buildBackToTop(section) {
 
 /**
  * Builds the accordion nav columns from content.
+ * Parses h2 + ul pairs regardless of DOM nesting depth.
  * @param {Element} section The section containing nav columns
  * @returns {Element} The nav columns container
  */
@@ -29,50 +30,52 @@ function buildNavColumns(section) {
   const container = document.createElement('div');
   container.classList.add('footer-nav');
 
-  const columns = section.querySelectorAll(':scope > div > div');
-  columns.forEach((col) => {
+  const headings = section.querySelectorAll('h2');
+  headings.forEach((heading) => {
     const column = document.createElement('div');
     column.classList.add('footer-nav-column');
 
-    const heading = col.querySelector('h2');
-    const list = col.querySelector('ul');
-
-    if (heading && list) {
-      const header = document.createElement('button');
-      header.classList.add('footer-nav-header');
-      header.setAttribute('aria-expanded', 'false');
-      header.textContent = heading.textContent;
-
-      const chevron = document.createElement('span');
-      chevron.classList.add('footer-chevron');
-      chevron.setAttribute('aria-hidden', 'true');
-      header.append(chevron);
-
-      const content = document.createElement('div');
-      content.classList.add('footer-nav-content');
-
-      // Mark external links (*.singaporeair.com subdomains are internal)
-      list.querySelectorAll('a').forEach((link) => {
-        const href = link.getAttribute('href') || '';
-        if (href.startsWith('http') && !href.includes('singaporeair.com')) {
-          link.classList.add('footer-external-link');
-          link.setAttribute('target', '_blank');
-          link.setAttribute('rel', 'noopener noreferrer');
-        }
-      });
-
-      content.append(list);
-      column.append(header, content);
-
-      header.addEventListener('click', () => {
-        const expanded = header.getAttribute('aria-expanded') === 'true';
-        // Close all other accordions on mobile
-        container.querySelectorAll('.footer-nav-header').forEach((h) => {
-          h.setAttribute('aria-expanded', 'false');
-        });
-        header.setAttribute('aria-expanded', String(!expanded));
-      });
+    // Walk siblings to find the next UL after this heading
+    let list = heading.nextElementSibling;
+    while (list && list.tagName !== 'UL' && list.tagName !== 'H2') {
+      list = list.nextElementSibling;
     }
+    if (!list || list.tagName !== 'UL') return;
+
+    const header = document.createElement('button');
+    header.classList.add('footer-nav-header');
+    header.setAttribute('aria-expanded', 'false');
+    header.textContent = heading.textContent;
+
+    const chevron = document.createElement('span');
+    chevron.classList.add('footer-chevron');
+    chevron.setAttribute('aria-hidden', 'true');
+    header.append(chevron);
+
+    const content = document.createElement('div');
+    content.classList.add('footer-nav-content');
+
+    // Mark external links (*.singaporeair.com subdomains are internal)
+    list.querySelectorAll('a').forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.startsWith('http') && !href.includes('singaporeair.com')) {
+        link.classList.add('footer-external-link');
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+
+    content.append(list);
+    column.append(header, content);
+
+    header.addEventListener('click', () => {
+      const expanded = header.getAttribute('aria-expanded') === 'true';
+      // Close all other accordions on mobile
+      container.querySelectorAll('.footer-nav-header').forEach((h) => {
+        h.setAttribute('aria-expanded', 'false');
+      });
+      header.setAttribute('aria-expanded', String(!expanded));
+    });
 
     container.append(column);
   });
@@ -82,6 +85,7 @@ function buildNavColumns(section) {
 
 /**
  * Builds the awards and app store section.
+ * Classifies paragraphs by content type instead of DOM position.
  * @param {Element} section The section containing awards and CTA
  * @returns {Element} The awards row element
  */
@@ -89,32 +93,35 @@ function buildAwardsRow(section) {
   const row = document.createElement('div');
   row.classList.add('footer-awards-row');
 
-  const innerDivs = section.querySelectorAll(':scope > div > div');
+  const left = document.createElement('div');
+  left.classList.add('footer-awards-left');
 
-  // Left side: awards + app store badges
-  if (innerDivs[0]) {
-    const left = document.createElement('div');
-    left.classList.add('footer-awards-left');
+  const awardsContainer = document.createElement('div');
+  awardsContainer.classList.add('footer-awards');
 
-    const paragraphs = innerDivs[0].querySelectorAll('p');
-    // First p = award images
-    if (paragraphs[0]) {
-      const awardsContainer = document.createElement('div');
-      awardsContainer.classList.add('footer-awards');
-      paragraphs[0].querySelectorAll('img').forEach((img) => {
+  const appStores = document.createElement('div');
+  appStores.classList.add('footer-app-stores');
+
+  const right = document.createElement('div');
+  right.classList.add('footer-signup');
+
+  const paragraphs = section.querySelectorAll('p');
+  paragraphs.forEach((p) => {
+    const links = [...p.querySelectorAll('a')];
+    const imgs = [...p.querySelectorAll('img')];
+
+    if (imgs.length > 0 && links.length === 0) {
+      // Award images (images without links)
+      imgs.forEach((img) => {
         const awardImg = document.createElement('img');
         awardImg.src = img.src;
         awardImg.alt = img.alt;
         awardImg.loading = 'lazy';
         awardsContainer.append(awardImg);
       });
-      left.append(awardsContainer);
-    }
-    // Second p = app store badges
-    if (paragraphs[1]) {
-      const appStores = document.createElement('div');
-      appStores.classList.add('footer-app-stores');
-      paragraphs[1].querySelectorAll('a').forEach((link) => {
+    } else if (links.length > 0 && links[0].querySelector('img')) {
+      // App store badges (links containing images)
+      links.forEach((link) => {
         const a = document.createElement('a');
         a.href = link.href;
         a.target = '_blank';
@@ -129,18 +136,9 @@ function buildAwardsRow(section) {
         }
         appStores.append(a);
       });
-      left.append(appStores);
-    }
-
-    row.append(left);
-  }
-
-  // Right side: signup CTA
-  if (innerDivs[1]) {
-    const right = document.createElement('div');
-    right.classList.add('footer-signup');
-    const link = innerDivs[1].querySelector('a');
-    if (link) {
+    } else if (links.length > 0) {
+      // Signup CTA (text link without images)
+      const link = links[0];
       const cta = document.createElement('a');
       cta.href = link.href;
       cta.classList.add('footer-signup-cta');
@@ -156,8 +154,12 @@ function buildAwardsRow(section) {
 
       right.append(cta);
     }
-    row.append(right);
-  }
+  });
+
+  if (awardsContainer.children.length) left.append(awardsContainer);
+  if (appStores.children.length) left.append(appStores);
+  if (left.children.length) row.append(left);
+  if (right.children.length) row.append(right);
 
   return row;
 }
@@ -165,18 +167,16 @@ function buildAwardsRow(section) {
 /**
  * Creates a linked image element.
  * @param {Element} sourceLink The source anchor element
- * @param {object} opts Options (external, className)
+ * @param {object} opts Options (ariaLabel)
  * @returns {Element} The anchor with image
  */
 function createLinkedImage(sourceLink, opts = {}) {
   const a = document.createElement('a');
   a.href = sourceLink.href;
-  if (opts.external !== false) {
-    const href = sourceLink.getAttribute('href') || '';
-    if (href.startsWith('http') && !href.includes('singaporeair.com')) {
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-    }
+  const href = sourceLink.getAttribute('href') || '';
+  if (href.startsWith('http') && !href.includes('singaporeair.com')) {
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
   }
   const img = sourceLink.querySelector('img');
   if (img) {
@@ -191,48 +191,69 @@ function createLinkedImage(sourceLink, opts = {}) {
 }
 
 /**
- * Builds the logos row from content.
- * @param {Element} div The div containing logo paragraphs
- * @returns {Element} The logos row element
+ * Builds the bottom section with logos, legal, and social links.
+ * Uses content-based parsing to work with both nested and flat HTML.
+ * @param {Element} section The section containing bottom content
+ * @returns {Element} The bottom section element
  */
-function buildLogosRow(div) {
+function buildBottomSection(section) {
+  const bottom = document.createElement('div');
+  bottom.classList.add('footer-bottom');
+
+  const paragraphs = [...section.querySelectorAll('p')];
+
+  // Find key paragraphs by content type
+  const legalIdx = paragraphs.findIndex((p) => {
+    const links = p.querySelectorAll('a');
+    return links.length >= 3 && !p.querySelector('img');
+  });
+
+  const disclaimerIdx = paragraphs.findIndex((p) => p.textContent.trim().startsWith('Hyperlinks'));
+
+  // --- Logos row: all <a><img> paragraphs before the legal paragraph ---
+  const logoParagraphs = legalIdx >= 0 ? paragraphs.slice(0, legalIdx) : [];
   const logosRow = document.createElement('div');
   logosRow.classList.add('footer-logos-row');
 
-  const paragraphs = div.querySelectorAll('p');
-  if (paragraphs[0]) {
-    const airlineLogos = document.createElement('div');
-    airlineLogos.classList.add('footer-airline-logos');
-    paragraphs[0].querySelectorAll('a').forEach((link) => {
-      airlineLogos.append(createLinkedImage(link));
-    });
-    logosRow.append(airlineLogos);
-  }
-  if (paragraphs[1]) {
-    const starAlliance = document.createElement('div');
-    starAlliance.classList.add('footer-star-alliance');
-    const link = paragraphs[1].querySelector('a');
-    if (link) starAlliance.append(createLinkedImage(link));
-    logosRow.append(starAlliance);
-  }
-  return logosRow;
-}
+  const airlineLogos = document.createElement('div');
+  airlineLogos.classList.add('footer-airline-logos');
 
-/**
- * Builds the legal links row from content.
- * @param {Element} div The div containing legal paragraphs
- * @returns {{ links: Element, disclaimer: Element }} Legal links and disclaimer elements
- */
-function buildLegalSection(div) {
-  const paragraphs = div.querySelectorAll('p');
+  const starAlliance = document.createElement('div');
+  starAlliance.classList.add('footer-star-alliance');
+
+  logoParagraphs.forEach((p) => {
+    p.querySelectorAll('a').forEach((link) => {
+      const img = link.querySelector('img');
+      if (img && img.alt && img.alt.toLowerCase().includes('star alliance')) {
+        starAlliance.append(createLinkedImage(link));
+      } else if (img) {
+        airlineLogos.append(createLinkedImage(link));
+      }
+    });
+  });
+
+  if (airlineLogos.children.length) logosRow.append(airlineLogos);
+  if (starAlliance.children.length) logosRow.append(starAlliance);
+  if (logosRow.children.length) bottom.append(logosRow);
+
+  // --- Legal links + social icons row ---
+  const legalRow = document.createElement('div');
+  legalRow.classList.add('footer-legal-row');
 
   const legalLinks = document.createElement('div');
   legalLinks.classList.add('footer-legal-links');
-  if (paragraphs[0]) {
-    const links = paragraphs[0].querySelectorAll('a');
+
+  if (legalIdx >= 0) {
+    const links = paragraphs[legalIdx].querySelectorAll('a');
     links.forEach((link, i) => {
-      const a = createLinkedImage(link);
+      const a = document.createElement('a');
+      a.href = link.href;
       a.textContent = link.textContent.trim();
+      const linkHref = link.getAttribute('href') || '';
+      if (linkHref.startsWith('http') && !linkHref.includes('singaporeair.com')) {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      }
       legalLinks.append(a);
       if (i < links.length - 1) {
         const sep = document.createElement('span');
@@ -243,13 +264,30 @@ function buildLegalSection(div) {
       }
     });
   }
+  legalRow.append(legalLinks);
 
-  const disclaimer = document.createElement('p');
-  disclaimer.classList.add('footer-disclaimer');
-  if (paragraphs[1]) {
-    const sourceImg = paragraphs[1].querySelector('img');
+  // Social links: all <a><img> paragraphs after the disclaimer
+  const socialParagraphs = disclaimerIdx >= 0 ? paragraphs.slice(disclaimerIdx + 1) : [];
+  if (socialParagraphs.length) {
+    const socialRow = document.createElement('div');
+    socialRow.classList.add('footer-social');
+    socialParagraphs.forEach((p) => {
+      p.querySelectorAll('a').forEach((link) => {
+        socialRow.append(createLinkedImage(link, { ariaLabel: true }));
+      });
+    });
+    legalRow.append(socialRow);
+  }
+  bottom.append(legalRow);
+
+  // --- Disclaimer ---
+  if (disclaimerIdx >= 0) {
+    const disclaimer = document.createElement('p');
+    disclaimer.classList.add('footer-disclaimer');
+    const sourceP = paragraphs[disclaimerIdx];
+    const sourceImg = sourceP.querySelector('img');
     if (sourceImg) {
-      [...paragraphs[1].childNodes].forEach((node) => {
+      [...sourceP.childNodes].forEach((node) => {
         if (node.nodeType === Node.TEXT_NODE) {
           disclaimer.append(document.createTextNode(node.textContent));
         } else if (node.querySelector && node.querySelector('img')) {
@@ -262,52 +300,10 @@ function buildLegalSection(div) {
         }
       });
     } else {
-      disclaimer.textContent = paragraphs[1].textContent.trim();
+      disclaimer.textContent = sourceP.textContent.trim();
     }
+    bottom.append(disclaimer);
   }
-
-  return { links: legalLinks, disclaimer };
-}
-
-/**
- * Builds the social links row from content.
- * @param {Element} div The div containing social link paragraph
- * @returns {Element} The social row element
- */
-function buildSocialRow(div) {
-  const socialRow = document.createElement('div');
-  socialRow.classList.add('footer-social');
-  div.querySelectorAll('a').forEach((link) => {
-    socialRow.append(createLinkedImage(link, { ariaLabel: true }));
-  });
-  return socialRow;
-}
-
-/**
- * Builds the bottom section with logos, legal, and social links.
- * @param {Element} section The section containing bottom content
- * @returns {Element} The bottom section element
- */
-function buildBottomSection(section) {
-  const bottom = document.createElement('div');
-  bottom.classList.add('footer-bottom');
-
-  const innerDivs = section.querySelectorAll(':scope > div > div');
-
-  if (innerDivs[0]) bottom.append(buildLogosRow(innerDivs[0]));
-
-  // Legal links + social icons share a row on desktop
-  const legalRow = document.createElement('div');
-  legalRow.classList.add('footer-legal-row');
-  const { links, disclaimer } = innerDivs[1]
-    ? buildLegalSection(innerDivs[1])
-    : { links: document.createElement('div'), disclaimer: document.createElement('p') };
-  legalRow.append(links);
-  if (innerDivs[2]) legalRow.append(buildSocialRow(innerDivs[2]));
-  bottom.append(legalRow);
-
-  // Disclaimer spans full width below
-  bottom.append(disclaimer);
 
   return bottom;
 }
