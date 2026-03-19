@@ -1,5 +1,79 @@
 import { getMetadata } from '../../scripts/aem.js';
 
+/* ---- Resilient nav-content helpers ----
+ * Work with both the handcrafted nav.plain.html (nested divs + CSS classes)
+ * and DA-rendered nav (flat <p> elements, no classes).
+ */
+
+function findLogoLink(brandNavDiv) {
+  if (!brandNavDiv) return null;
+  // Handcrafted: logo is inside first child div
+  const nested = brandNavDiv.querySelector(':scope > div:first-child a');
+  if (nested && nested.querySelector('img')) return nested;
+  // DA flat: <p><a><img></a></p> as direct child
+  return [...brandNavDiv.querySelectorAll('a')].find((a) => a.querySelector('img')) || null;
+}
+
+function findMainNavList(brandNavDiv) {
+  if (!brandNavDiv) return null;
+  // Handcrafted: inside second child div
+  const nested = brandNavDiv.querySelector(':scope > div:nth-child(2) > ul');
+  if (nested) return nested;
+  // DA flat: direct child UL
+  return brandNavDiv.querySelector(':scope > ul') || brandNavDiv.querySelector('ul');
+}
+
+function findToolElements(toolsDiv) {
+  const result = {
+    helpLink: null,
+    feedbackLink: null,
+    localeText: null,
+    loginText: null,
+    signUpLink: null,
+    hasSearch: false,
+  };
+  if (!toolsDiv) return result;
+
+  result.helpLink = toolsDiv.querySelector('a[href*="help"]');
+  result.feedbackLink = toolsDiv.querySelector('a[href*="feedback"]');
+  result.signUpLink = toolsDiv.querySelector('a[href*="registration"]');
+
+  // Locale: try class first, then text pattern
+  const localeBtn = toolsDiv.querySelector('.locale-selector');
+  if (localeBtn) {
+    result.localeText = localeBtn.textContent.trim();
+  } else {
+    toolsDiv.querySelectorAll('p').forEach((p) => {
+      const text = p.textContent.trim();
+      if (!result.localeText && !p.querySelector('a') && text.includes('\u00B7')) {
+        result.localeText = text;
+      }
+    });
+  }
+
+  // Login: try class first, then text match
+  const loginBtn = toolsDiv.querySelector('.login-btn');
+  if (loginBtn) {
+    result.loginText = loginBtn.textContent.trim();
+  } else {
+    toolsDiv.querySelectorAll('p').forEach((p) => {
+      const text = p.textContent.trim();
+      if (!result.loginText && text.toLowerCase().replace(/[-\s]/g, '') === 'login' && !p.querySelector('a')) {
+        result.loginText = text;
+      }
+    });
+  }
+
+  // Search: class or icon
+  result.hasSearch = !!(
+    toolsDiv.querySelector('.search-toggle')
+    || toolsDiv.querySelector('.icon-search')
+    || toolsDiv.querySelector('.icon.icon-search')
+  );
+
+  return result;
+}
+
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -128,16 +202,11 @@ function buildHeaderBar(brandNavDiv, nav) {
   // Logo
   const navBrand = document.createElement('div');
   navBrand.classList.add('nav-brand');
-  if (brandNavDiv) {
-    const logoDiv = brandNavDiv.querySelector(':scope > div:first-child');
-    if (logoDiv) {
-      const logoLink = logoDiv.querySelector('a');
-      if (logoLink) {
-        const logo = logoLink.cloneNode(true);
-        logo.classList.add('nav-logo');
-        navBrand.append(logo);
-      }
-    }
+  const logoLink = findLogoLink(brandNavDiv);
+  if (logoLink) {
+    const logo = logoLink.cloneNode(true);
+    logo.classList.add('nav-logo');
+    navBrand.append(logo);
   }
   headerBar.append(navBrand);
 
@@ -171,40 +240,38 @@ function buildPanelBottom(toolsDiv) {
   const panelBottom = document.createElement('div');
   panelBottom.classList.add('panel-bottom');
 
-  if (toolsDiv) {
-    const authDiv = document.createElement('div');
-    authDiv.classList.add('panel-auth');
+  const tools = findToolElements(toolsDiv);
 
-    const loginBtn = toolsDiv.querySelector('.login-btn');
-    if (loginBtn) {
-      const login = document.createElement('button');
-      login.classList.add('panel-login');
-      login.textContent = 'Log in';
-      login.setAttribute('aria-label', 'Log in to access your account');
-      authDiv.append(login);
-    }
+  const authDiv = document.createElement('div');
+  authDiv.classList.add('panel-auth');
 
-    const signUpLink = toolsDiv.querySelector('a[href*="registration"]');
-    if (signUpLink) {
-      const signup = signUpLink.cloneNode(true);
-      signup.classList.add('panel-signup');
-      signup.textContent = 'Sign Up';
-      signup.setAttribute('aria-label', 'Sign up for a new account');
-      authDiv.append(signup);
-    }
-    panelBottom.append(authDiv);
-
-    const localeBtn = toolsDiv.querySelector('.locale-selector');
-    if (localeBtn) {
-      const localeDiv = document.createElement('div');
-      localeDiv.classList.add('panel-locale');
-      const locale = document.createElement('button');
-      locale.classList.add('locale-btn');
-      locale.textContent = localeBtn.textContent;
-      localeDiv.append(locale);
-      panelBottom.append(localeDiv);
-    }
+  if (tools.loginText) {
+    const login = document.createElement('button');
+    login.classList.add('panel-login');
+    login.textContent = 'Log in';
+    login.setAttribute('aria-label', 'Log in to access your account');
+    authDiv.append(login);
   }
+
+  if (tools.signUpLink) {
+    const signup = tools.signUpLink.cloneNode(true);
+    signup.classList.add('panel-signup');
+    signup.textContent = 'Sign Up';
+    signup.setAttribute('aria-label', 'Sign up for a new account');
+    authDiv.append(signup);
+  }
+  panelBottom.append(authDiv);
+
+  if (tools.localeText) {
+    const localeDiv = document.createElement('div');
+    localeDiv.classList.add('panel-locale');
+    const locale = document.createElement('button');
+    locale.classList.add('locale-btn');
+    locale.textContent = tools.localeText;
+    localeDiv.append(locale);
+    panelBottom.append(localeDiv);
+  }
+
   return panelBottom;
 }
 
@@ -215,52 +282,48 @@ function buildSlidePanel(brandNavDiv, toolsDiv, nav) {
   // Panel top: Help link
   const panelTop = document.createElement('div');
   panelTop.classList.add('panel-top');
-  if (toolsDiv) {
-    const helpLink = toolsDiv.querySelector('a[href*="help"]');
-    if (helpLink) {
-      const help = helpLink.cloneNode(true);
-      help.classList.add('panel-help');
-      panelTop.append(help);
-    }
+  const tools = findToolElements(toolsDiv);
+  if (tools.helpLink) {
+    const help = tools.helpLink.cloneNode(true);
+    help.classList.add('panel-help');
+    panelTop.append(help);
   }
   slidePanel.append(panelTop);
 
   // Main nav items list
   const navList = document.createElement('div');
   navList.classList.add('nav-list');
-  if (brandNavDiv) {
-    const navUl = brandNavDiv.querySelector(':scope > div:nth-child(2) > ul');
-    if (navUl) {
-      navUl.querySelectorAll(':scope > li').forEach((item) => {
-        const link = item.querySelector(':scope > a');
-        if (!link) return;
+  const navUl = findMainNavList(brandNavDiv);
+  if (navUl) {
+    navUl.querySelectorAll(':scope > li').forEach((item) => {
+      const link = item.querySelector(':scope > a');
+      if (!link) return;
 
-        const label = link.textContent.trim();
-        const hasSubNav = !!item.querySelector(':scope > ul');
+      const label = link.textContent.trim();
+      const hasSubNav = !!item.querySelector(':scope > ul');
 
-        const navBtn = document.createElement('button');
-        navBtn.classList.add('nav-item');
-        navBtn.textContent = label;
-        if (hasSubNav) navBtn.classList.add('has-subnav');
+      const navBtn = document.createElement('button');
+      navBtn.classList.add('nav-item');
+      navBtn.textContent = label;
+      if (hasSubNav) navBtn.classList.add('has-subnav');
 
-        if (hasSubNav) {
-          const subNavPanel = buildSubNavPanel(item, label);
-          slidePanel.append(subNavPanel);
-          navBtn.addEventListener('click', () => {
-            slidePanel.querySelectorAll('.subnav-panel').forEach((p) => {
-              p.setAttribute('aria-hidden', 'true');
-            });
-            subNavPanel.setAttribute('aria-hidden', 'false');
+      if (hasSubNav) {
+        const subNavPanel = buildSubNavPanel(item, label);
+        slidePanel.append(subNavPanel);
+        navBtn.addEventListener('click', () => {
+          slidePanel.querySelectorAll('.subnav-panel').forEach((p) => {
+            p.setAttribute('aria-hidden', 'true');
           });
-        } else {
-          navBtn.addEventListener('click', () => {
-            window.location.href = link.href;
-          });
-        }
+          subNavPanel.setAttribute('aria-hidden', 'false');
+        });
+      } else {
+        navBtn.addEventListener('click', () => {
+          window.location.href = link.href;
+        });
+      }
 
-        navList.append(navBtn);
-      });
-    }
+      navList.append(navBtn);
+    });
   }
   slidePanel.append(navList);
 
@@ -277,22 +340,19 @@ function buildUtilityRow(toolsDiv) {
   const inner = document.createElement('div');
   inner.classList.add('desktop-utility-inner');
 
-  if (toolsDiv) {
-    const utilityDiv = toolsDiv.querySelector(':scope > div:first-child');
-    if (utilityDiv) {
-      utilityDiv.querySelectorAll('a').forEach((a) => {
-        const link = a.cloneNode(true);
-        link.classList.add('utility-link');
-        inner.append(link);
-      });
-      const localeBtn = utilityDiv.querySelector('.locale-selector');
-      if (localeBtn) {
-        const locale = document.createElement('button');
-        locale.classList.add('utility-locale');
-        locale.textContent = localeBtn.textContent;
-        inner.append(locale);
-      }
+  const tools = findToolElements(toolsDiv);
+  [tools.helpLink, tools.feedbackLink].forEach((a) => {
+    if (a) {
+      const link = a.cloneNode(true);
+      link.classList.add('utility-link');
+      inner.append(link);
     }
+  });
+  if (tools.localeText) {
+    const locale = document.createElement('button');
+    locale.classList.add('utility-locale');
+    locale.textContent = tools.localeText;
+    inner.append(locale);
   }
 
   row.append(inner);
@@ -361,32 +421,30 @@ function buildDesktopNavLinks(brandNavDiv) {
   const navLinks = document.createElement('div');
   navLinks.classList.add('desktop-nav-links');
 
-  if (brandNavDiv) {
-    const navUl = brandNavDiv.querySelector(':scope > div:nth-child(2) > ul');
-    if (navUl) {
-      navUl.querySelectorAll(':scope > li').forEach((item, i) => {
-        const link = item.querySelector(':scope > a');
-        if (!link) return;
+  const navUl = findMainNavList(brandNavDiv);
+  if (navUl) {
+    navUl.querySelectorAll(':scope > li').forEach((item, i) => {
+      const link = item.querySelector(':scope > a');
+      if (!link) return;
 
-        const navItem = document.createElement('div');
-        navItem.classList.add('desktop-nav-item');
+      const navItem = document.createElement('div');
+      navItem.classList.add('desktop-nav-item');
 
-        const navLink = document.createElement('a');
-        navLink.classList.add('desktop-nav-link');
-        navLink.href = link.href;
-        navLink.textContent = link.textContent.trim();
-        navLink.setAttribute('aria-expanded', 'false');
-        navLink.setAttribute('aria-controls', `megamenu-${i}`);
-        navItem.append(navLink);
+      const navLink = document.createElement('a');
+      navLink.classList.add('desktop-nav-link');
+      navLink.href = link.href;
+      navLink.textContent = link.textContent.trim();
+      navLink.setAttribute('aria-expanded', 'false');
+      navLink.setAttribute('aria-controls', `megamenu-${i}`);
+      navItem.append(navLink);
 
-        const hasSubNav = !!item.querySelector(':scope > ul');
-        if (hasSubNav) {
-          navItem.append(buildMegamenuPanel(item, i));
-        }
+      const hasSubNav = !!item.querySelector(':scope > ul');
+      if (hasSubNav) {
+        navItem.append(buildMegamenuPanel(item, i));
+      }
 
-        navLinks.append(navItem);
-      });
-    }
+      navLinks.append(navItem);
+    });
   }
 
   return navLinks;
@@ -396,47 +454,40 @@ function buildDesktopRight(toolsDiv) {
   const right = document.createElement('div');
   right.classList.add('desktop-right');
 
-  if (toolsDiv) {
-    const actionsDiv = toolsDiv.querySelector(':scope > div:nth-child(2)');
-    if (actionsDiv) {
-      const searchBtn = actionsDiv.querySelector('.search-toggle');
-      if (searchBtn) {
-        const search = document.createElement('button');
-        search.classList.add('desktop-search');
-        search.setAttribute('aria-label', 'Search');
-        const searchIcon = document.createElement('span');
-        searchIcon.classList.add('search-icon');
-        search.append(searchIcon);
-        right.append(search);
-      }
+  const tools = findToolElements(toolsDiv);
 
-      const auth = document.createElement('div');
-      auth.classList.add('desktop-auth');
-
-      const loginBtn = actionsDiv.querySelector('.login-btn');
-      if (loginBtn) {
-        const login = document.createElement('button');
-        login.classList.add('desktop-login');
-        login.textContent = loginBtn.textContent;
-        auth.append(login);
-      }
-
-      const sep = document.createElement('span');
-      sep.classList.add('desktop-auth-sep');
-      sep.textContent = '|';
-      auth.append(sep);
-
-      const signUpLink = actionsDiv.querySelector('a[href*="registration"]');
-      if (signUpLink) {
-        const signup = signUpLink.cloneNode(true);
-        signup.classList.add('desktop-signup');
-        auth.append(signup);
-      }
-
-      right.append(auth);
-    }
+  if (tools.hasSearch) {
+    const search = document.createElement('button');
+    search.classList.add('desktop-search');
+    search.setAttribute('aria-label', 'Search');
+    const searchIcon = document.createElement('span');
+    searchIcon.classList.add('search-icon');
+    search.append(searchIcon);
+    right.append(search);
   }
 
+  const auth = document.createElement('div');
+  auth.classList.add('desktop-auth');
+
+  if (tools.loginText) {
+    const login = document.createElement('button');
+    login.classList.add('desktop-login');
+    login.textContent = tools.loginText;
+    auth.append(login);
+  }
+
+  const sep = document.createElement('span');
+  sep.classList.add('desktop-auth-sep');
+  sep.textContent = '|';
+  auth.append(sep);
+
+  if (tools.signUpLink) {
+    const signup = tools.signUpLink.cloneNode(true);
+    signup.classList.add('desktop-signup');
+    auth.append(signup);
+  }
+
+  right.append(auth);
   return right;
 }
 
@@ -453,16 +504,11 @@ function buildDesktopHeader(brandNavDiv, toolsDiv) {
   mainInner.classList.add('desktop-main-inner');
 
   // Logo
-  if (brandNavDiv) {
-    const logoDiv = brandNavDiv.querySelector(':scope > div:first-child');
-    if (logoDiv) {
-      const logoLink = logoDiv.querySelector('a');
-      if (logoLink) {
-        const logo = logoLink.cloneNode(true);
-        logo.classList.add('desktop-logo');
-        mainInner.append(logo);
-      }
-    }
+  const deskLogoLink = findLogoLink(brandNavDiv);
+  if (deskLogoLink) {
+    const logo = deskLogoLink.cloneNode(true);
+    logo.classList.add('desktop-logo');
+    mainInner.append(logo);
   }
 
   mainInner.append(buildDesktopNavLinks(brandNavDiv));
