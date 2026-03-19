@@ -1,0 +1,93 @@
+{
+  "templates": [
+    {
+      "name": "homepage",
+      "urls": [
+        "https://www.singaporeair.com/en_UK/sg/home"
+      ],
+      "description": "Singapore Airlines homepage with hero masthead, flight booking widget, trending destinations, highlights promotions, mobile app CTA, and comprehensive footer",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            "#masthead"
+          ]
+        },
+        {
+          "name": "hero-booking-cta",
+          "instances": [
+            "#hwidget"
+          ]
+        },
+        {
+          "name": "cards-destinations",
+          "instances": [
+            ".trending-destinations .destination-cards"
+          ]
+        },
+        {
+          "name": "cards-highlights",
+          "instances": [
+            ".highlights .highlight-cards"
+          ]
+        },
+        {
+          "name": "hero-app-cta",
+          "instances": [
+            ".seamless-travel"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-hero",
+          "name": "Hero / Masthead",
+          "selector": "#masthead",
+          "style": "dark",
+          "blocks": ["hero"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-login-prompt",
+          "name": "KrisFlyer Login Prompt",
+          "selector": "#hlogin",
+          "style": "navy",
+          "blocks": [],
+          "defaultContent": ["#hlogin p", "#hlogin a", "#hlogin button"]
+        },
+        {
+          "id": "section-booking",
+          "name": "Booking Widget",
+          "selector": "#hwidget",
+          "style": null,
+          "blocks": ["hero-booking-cta"],
+          "defaultContent": []
+        },
+        {
+          "id": "section-trending",
+          "name": "Trending Destinations",
+          "selector": ".trending-destinations",
+          "style": "light",
+          "blocks": ["cards-destinations"],
+          "defaultContent": [".trending-destinations h3", ".trending-destinations .view-more"]
+        },
+        {
+          "id": "section-highlights",
+          "name": "Highlights",
+          "selector": ".highlights",
+          "style": null,
+          "blocks": ["cards-highlights"],
+          "defaultContent": [".highlights h3"]
+        },
+        {
+          "id": "section-app-cta",
+          "name": "Mobile App CTA",
+          "selector": ".seamless-travel",
+          "style": "dark",
+          "blocks": ["hero-app-cta"],
+          "defaultContent": []
+        }
+      ]
+    }
+  ]
+}

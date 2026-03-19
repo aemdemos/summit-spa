@@ -1,22 +1,448 @@
-@import url('./footer-tokens.css');
+/* Footer block – Singapore Airlines parity
+   Mobile-first, breakpoints at 768px and 1182px */
 
 footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+  background-color: #fff;
+  font-family: var(--body-font-family);
+}
+
+footer .footer {
+  padding: 0;
 }
 
 footer .footer > div {
-  margin: auto;
-  max-width: var(--footer-max-width);
-  padding: var(--footer-padding);
+  max-width: none;
 }
 
-footer .footer p {
+footer .footer .footer-wrapper,
+footer .footer .default-content-wrapper {
+  max-width: none;
+  padding: 0;
+}
+
+/* ===== Back to top ===== */
+
+footer .footer-back-to-top-wrapper {
+  position: relative;
+}
+
+footer .footer-back-to-top {
+  display: block;
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: -30px;
+  right: 20px;
+  z-index: 1;
+  padding: 0;
+  border: none;
+  background: url("https://www.singaporeair.com/assets/images/svg/icons/chevron-circle-grey.svg") no-repeat center / contain;
+  cursor: pointer;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+footer .footer-back-to-top:hover {
+  opacity: 0.7;
+}
+
+/* ===== Nav columns (accordion on mobile) ===== */
+
+footer .footer-nav {
+  padding: 0 20px;
+}
+
+footer .footer-nav-column {
+  border-bottom: 1px solid #e5e9f0;
+}
+
+footer .footer-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 18px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+  font-size: 12px;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+footer .footer-chevron {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: url("https://www.singaporeair.com/assets/images/svg/icons/chevron-black.svg") no-repeat center / contain;
+  transition: transform 0.3s ease;
+}
+
+footer .footer-nav-header[aria-expanded="true"] .footer-chevron {
+  transform: rotate(180deg);
+}
+
+footer .footer-nav-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+footer .footer-nav-header[aria-expanded="true"] + .footer-nav-content {
+  max-height: 500px;
+}
+
+footer .footer-nav-content ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 16px;
+}
+
+footer .footer-nav-content li {
+  padding: 0;
   margin: 0;
 }
 
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: var(--footer-padding-desktop);
+footer .footer-nav-content a {
+  display: block;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+footer .footer-nav-content a:hover {
+  color: #222;
+  text-decoration: underline;
+}
+
+footer .footer-nav-content a.footer-external-link::after {
+  content: "";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-left: 5px;
+  background: url("https://www.singaporeair.com/saar5/assets/images/svg/icons/ic_external-link-black.svg") no-repeat center / contain;
+  vertical-align: middle;
+  opacity: 0.5;
+}
+
+/* ===== Awards row ===== */
+
+footer .footer-awards-row {
+  padding: 30px 20px;
+}
+
+footer .footer-awards-left {
+  text-align: center;
+}
+
+footer .footer-awards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+footer .footer-awards img {
+  height: 48px;
+  width: auto;
+}
+
+footer .footer-app-stores {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+footer .footer-app-stores img {
+  height: 35px;
+  width: auto;
+}
+
+footer .footer-signup {
+  text-align: center;
+}
+
+footer .footer-signup-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #00276c;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #00276c;
+  letter-spacing: 1.38px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+footer .footer-signup-cta:hover {
+  background-color: #00276c;
+  color: #fff;
+}
+
+footer .footer-signup-cta:hover .footer-email-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 17' fill='%23fff'%3E%3Cpath d='M14 2H2C.9 2 0 2.9 0 4v9c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 4-6 3.5L2 6V4l6 3.5L14 4v2z'/%3E%3C/svg%3E");
+}
+
+footer .footer-email-icon {
+  display: inline-block;
+  width: 16px;
+  height: 17px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 17' fill='%2300276c'%3E%3Cpath d='M14 2H2C.9 2 0 2.9 0 4v9c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 4-6 3.5L2 6V4l6 3.5L14 4v2z'/%3E%3C/svg%3E") no-repeat center / contain;
+  transition: background-image 0.2s ease;
+}
+
+/* ===== Divider ===== */
+
+footer .footer-divider {
+  border: none;
+  border-top: 1px solid #e5e9f0;
+  margin: 0;
+}
+
+/* ===== Bottom section ===== */
+
+footer .footer-bottom {
+  padding: 20px;
+}
+
+/* Logos row – mobile: stacked & centered */
+
+footer .footer-logos-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 0 0;
+}
+
+footer .footer-airline-logos {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+footer .footer-airline-logos img {
+  height: 28px;
+  width: auto;
+}
+
+footer .footer-star-alliance {
+  margin-bottom: 20px;
+}
+
+footer .footer-star-alliance img {
+  height: 22px;
+  width: auto;
+}
+
+/* Legal + social row – mobile: centered & stacked */
+
+footer .footer-legal-row {
+  padding: 10px 0;
+  text-align: center;
+}
+
+footer .footer-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+footer .footer-legal-links a {
+  font-size: 13px;
+  color: #c2a570;
+  text-decoration: none;
+}
+
+footer .footer-legal-links a:hover {
+  text-decoration: underline;
+}
+
+footer .footer-legal-sep {
+  color: #c2a570;
+  font-size: 13px;
+  margin: 0 2px;
+}
+
+footer .footer-disclaimer {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.5;
+  margin: 30px 10px;
+  text-align: center;
+}
+
+footer .footer-external-icon {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  vertical-align: middle;
+}
+
+/* Social links – mobile: centered */
+
+footer .footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+footer .footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+footer .footer-social a:hover {
+  border-color: #666;
+}
+
+footer .footer-social img {
+  width: 12px;
+  height: 12px;
+}
+
+/* ===== Tablet (768+) ===== */
+
+@media (width >= 768px) {
+  footer .footer-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 30px 40px;
+  }
+
+  footer .footer-nav-column {
+    border-bottom: none;
+  }
+
+  footer .footer-nav-header {
+    cursor: default;
+    padding: 0 0 15px;
+  }
+
+  footer .footer-chevron {
+    display: none;
+  }
+
+  footer .footer-nav-content {
+    max-height: none;
+    overflow: visible;
+  }
+
+  footer .footer-nav-content ul {
+    padding: 0;
+  }
+
+  footer .footer-awards-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 30px 40px;
+  }
+
+  footer .footer-awards-left {
+    text-align: left;
+  }
+
+  footer .footer-awards {
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 0;
+  }
+
+  footer .footer-app-stores {
+    display: none;
+  }
+
+  footer .footer-signup {
+    text-align: right;
+  }
+
+  footer .footer-bottom {
+    padding: 20px 40px;
+  }
+}
+
+/* ===== Desktop (1182+) ===== */
+
+@media (width >= 1182px) {
+  footer .footer-nav {
+    padding: 40px 80px;
+    gap: 40px;
+  }
+
+  footer .footer-awards-row {
+    padding: 40px 80px;
+  }
+
+  footer .footer-bottom {
+    padding: 20px 80px;
+  }
+
+  /* Logos: horizontal row at desktop */
+  footer .footer-logos-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0 20px;
+  }
+
+  footer .footer-airline-logos {
+    margin-bottom: 0;
+  }
+
+  footer .footer-star-alliance {
+    margin-bottom: 0;
+  }
+
+  /* Legal + social: horizontal row at desktop */
+  footer .footer-legal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  footer .footer-legal-links {
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  footer .footer-social {
+    justify-content: flex-end;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  footer .footer-disclaimer {
+    text-align: left;
+    margin: 10px 0 40px;
   }
 }
