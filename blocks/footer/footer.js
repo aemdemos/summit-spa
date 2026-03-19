@@ -290,7 +290,8 @@ function buildBottomSection(section) {
       [...sourceP.childNodes].forEach((node) => {
         if (node.nodeType === Node.TEXT_NODE) {
           disclaimer.append(document.createTextNode(node.textContent));
-        } else if (node.querySelector && node.querySelector('img')) {
+        } else if (node.tagName === 'IMG'
+          || (node.querySelector && node.querySelector('img'))) {
           const icon = document.createElement('img');
           icon.src = sourceImg.src;
           icon.alt = 'external link';
