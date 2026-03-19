@@ -220,19 +220,20 @@ footer .footer-bottom {
   padding: 20px;
 }
 
-/* Logos row */
+/* Logos row – mobile: stacked & centered */
 
 footer .footer-logos-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px 0 20px;
+  padding: 15px 0 0;
 }
 
 footer .footer-airline-logos {
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-bottom: 15px;
 }
 
 footer .footer-airline-logos img {
@@ -240,21 +241,27 @@ footer .footer-airline-logos img {
   width: auto;
 }
 
+footer .footer-star-alliance {
+  margin-bottom: 20px;
+}
+
 footer .footer-star-alliance img {
   height: 22px;
   width: auto;
 }
 
-/* Legal + social row */
+/* Legal + social row – mobile: centered & stacked */
 
 footer .footer-legal-row {
   padding: 10px 0;
+  text-align: center;
 }
 
 footer .footer-legal-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   margin-bottom: 10px;
 }
@@ -279,7 +286,8 @@ footer .footer-disclaimer {
   font-size: 11px;
   color: #666;
   line-height: 1.5;
-  margin: 11px 0;
+  margin: 30px 10px;
+  text-align: center;
 }
 
 footer .footer-external-icon {
@@ -289,7 +297,7 @@ footer .footer-external-icon {
   vertical-align: middle;
 }
 
-/* Social links */
+/* Social links – mobile: centered */
 
 footer .footer-social {
   display: flex;
@@ -380,22 +388,6 @@ footer .footer-social img {
   footer .footer-bottom {
     padding: 20px 40px;
   }
-
-  footer .footer-legal-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  footer .footer-legal-links {
-    margin-bottom: 0;
-  }
-
-  footer .footer-social {
-    justify-content: flex-end;
-    padding: 0;
-    flex-shrink: 0;
-  }
 }
 
 /* ===== Desktop (1182+) ===== */
@@ -412,5 +404,45 @@ footer .footer-social img {
 
   footer .footer-bottom {
     padding: 20px 80px;
+  }
+
+  /* Logos: horizontal row at desktop */
+  footer .footer-logos-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0 20px;
+  }
+
+  footer .footer-airline-logos {
+    margin-bottom: 0;
+  }
+
+  footer .footer-star-alliance {
+    margin-bottom: 0;
+  }
+
+  /* Legal + social: horizontal row at desktop */
+  footer .footer-legal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  footer .footer-legal-links {
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  footer .footer-social {
+    justify-content: flex-end;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  footer .footer-disclaimer {
+    text-align: left;
+    margin: 10px 0 40px;
   }
 }
