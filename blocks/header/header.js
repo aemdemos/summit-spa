@@ -129,14 +129,14 @@ function findToolElements(toolsDiv) {
     });
   }
 
-  // Search: class, icon element, or DA-escaped text containing search/icon-search
+  // Search: class, icon element, or DA-escaped text containing search-toggle/icon-search
   result.hasSearch = !!(
     toolsDiv.querySelector('.search-toggle')
     || toolsDiv.querySelector('.icon-search')
     || toolsDiv.querySelector('.icon.icon-search')
     || [...toolsDiv.querySelectorAll('p')].find((p) => {
       const text = p.textContent.toLowerCase();
-      return text.includes('icon-search') || text.includes(':search:');
+      return text.includes('search-toggle') || text.includes('icon-search') || text.includes(':search:');
     })
   );
 
