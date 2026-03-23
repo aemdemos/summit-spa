@@ -697,11 +697,7 @@
 
 /* --- 992px+ (large screens) --- */
 @media (width >= 992px) {
-  .tabs-booking-cta {
-    max-width: 900px;
-  }
-
-  main .section.tabs-booking-cta-container > div {
+ main .section.tabs-booking-cta-container > div {
     padding-left: 0;
     padding-right: 0;
   }
@@ -716,13 +712,25 @@
     width:92%;
     align-items: center;
     margin-bottom: calc(-13rem + 30px);
+    max-width: 1080px;
+  }
+
+  .tabs-booking-cta {
+    max-width: none;
+  }
+}
+
+@media (width > 1000px) {
+  main .section.tabs-booking-cta-container > div {
+    max-width: 920px;
   }
 }
 
 /* --- 1200px+ (wide screens) --- */
 @media (width >= 1200px) {
-  .tabs-booking-cta {
-    max-width: 1080px;
+  main .section.tabs-booking-cta-container > div {
+max-width: 1080px;
+  
   }
 }
 
