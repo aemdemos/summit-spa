@@ -57,24 +57,81 @@ function parseFieldDef(text) {
    Content column parser
    ═══════════════════════════════════════════ */
 
+/** Parse a single <p> accessory (after a heading) into badge or checkbox. */
+function parseAccessoryParagraph(pEl) {
+  const links = [...pEl.querySelectorAll('a')];
+  if (links.length === 1) {
+    return {
+      kind: 'badge',
+      text: links[0].textContent.trim(),
+      href: links[0].getAttribute('href') || '#',
+    };
+  }
+  const badgeEl = pEl.querySelector('strong');
+  const badge = badgeEl ? badgeEl.textContent.trim() : '';
+  const fullText = pEl.textContent.trim();
+  const label = badge ? fullText.replace(badge, '').trim() : fullText;
+  return { kind: 'checkbox', text: label, badge };
+}
+
+/** True if <p> should end accessory collection (toggle, info, or links row). */
+function isAccessoryBoundary(pEl) {
+  const strong = pEl.querySelector('strong');
+  if (strong && strong.textContent.includes('|')) return true;
+  const em = pEl.querySelector('em');
+  if (em && em.textContent.trim() === pEl.textContent.trim()) return true;
+  if (pEl.querySelectorAll('a').length > 1) return true;
+  return false;
+}
+
+/** Parse a <p> into a section (info, toggle, links, text) or null. */
+function parseParagraphSection(pEl) {
+  const em = pEl.querySelector('em');
+  if (em && em.textContent.trim() === pEl.textContent.trim()) {
+    return { type: 'info', text: em.textContent.trim() };
+  }
+  const strong = pEl.querySelector('strong');
+  if (strong && strong.textContent.includes('|')) {
+    return {
+      type: 'toggle',
+      options: strong.textContent.split('|').map((s) => s.trim()),
+    };
+  }
+  const links = [...pEl.querySelectorAll('a')];
+  if (links.length) {
+    return {
+      type: 'links',
+      items: links.map((a) => ({
+        text: a.textContent.trim(),
+        href: a.getAttribute('href') || '#',
+      })),
+    };
+  }
+  const txt = pEl.textContent.trim();
+  return txt ? { type: 'text', text: txt } : null;
+}
+
+/** Process heading (h2/h3) and collect accessories, return { section, nextIdx }. */
+function parseHeadingSection(children, i) {
+  // eslint-disable-next-line secure-coding/detect-object-injection
+  const child = children[i];
+  const accessories = [];
+  let idx = i + 1;
+  while (idx < children.length) {
+    // eslint-disable-next-line secure-coding/detect-object-injection
+    const next = children[idx];
+    if (next.tagName?.toLowerCase() !== 'p' || isAccessoryBoundary(next)) break;
+    accessories.push(parseAccessoryParagraph(next));
+    idx += 1;
+  }
+  return {
+    section: { type: 'heading', text: child.textContent.trim(), accessories },
+    nextIdx: idx - 1,
+  };
+}
+
 /**
- * Reads the content column of a tab and returns an ordered list of form
- * "sections" the decorator can render.
- *
- * Recognised HTML authored in DA:
- *   <h2> / <h3>                → heading (+ optional subtitle from next <p>)
- *   <ul>                       → radio group (each <li> = one option)
- *   <ol>                       → field row   (each <li> = one field)
- *   <p><em>…</em></p>         → info notice
- *   <p><strong>A | B</strong> → toggle buttons
- *   <p> with <a> links         → form links
- *   <p> plain text             → description paragraph
- *
- * Consecutive <p> elements immediately after a heading are collected as
- * "accessories" and rendered inside the form header:
- *   <p><a href="…">…</a></p>                  → badge pill link
- *   <p>text <strong>TAG</strong></p>           → checkbox + badge tag
- *   <p>plain text</p>                          → checkbox
+ * Reads the content column of a tab and returns an ordered list of form sections.
  *
  * @param {Element} el Content column element
  * @returns {Object[]}
@@ -83,106 +140,35 @@ function parseFormContent(el) {
   if (!el) return [];
   const out = [];
   const children = [...el.children];
+  let i = 0;
 
-  for (let i = 0; i < children.length; i += 1) {
+  while (i < children.length) {
     // eslint-disable-next-line secure-coding/detect-object-injection
     const child = children[i];
     const tag = child.tagName?.toLowerCase();
 
     if (tag === 'h2' || tag === 'h3') {
-      // Collect consecutive <p> accessories after the heading
-      const accessories = [];
-      while (i + 1 < children.length) {
-        // eslint-disable-next-line secure-coding/detect-object-injection
-        const next = children[i + 1];
-        if (next.tagName?.toLowerCase() !== 'p') break;
-        // Stop if it's a toggle (<strong> with |)
-        const strong = next.querySelector('strong');
-        if (strong && strong.textContent.includes('|')) break;
-        // Stop if it's an info notice (<em> only)
-        const em = next.querySelector('em');
-        if (em && em.textContent.trim() === next.textContent.trim()) break;
-        // Stop if it has multiple links (form links row)
-        const links = [...next.querySelectorAll('a')];
-        if (links.length > 1) break;
-
-        // Single link → badge pill
-        if (links.length === 1) {
-          accessories.push({
-            kind: 'badge',
-            text: links[0].textContent.trim(),
-            href: links[0].getAttribute('href') || '#',
-          });
-        } else {
-          // Plain text, possibly with <strong> badge tag
-          const badgeEl = next.querySelector('strong');
-          const badge = badgeEl ? badgeEl.textContent.trim() : '';
-          const fullText = next.textContent.trim();
-          const label = badge
-            ? fullText.replace(badge, '').trim()
-            : fullText;
-          accessories.push({ kind: 'checkbox', text: label, badge });
-        }
-        i += 1;
-      }
-      out.push({
-        type: 'heading',
-        text: child.textContent.trim(),
-        accessories,
-      });
-      continue; // eslint-disable-line no-continue
-    }
-
-    if (tag === 'ul') {
+      const { section, nextIdx } = parseHeadingSection(children, i);
+      out.push(section);
+      i = nextIdx + 1;
+    } else if (tag === 'ul') {
       out.push({
         type: 'radios',
         items: [...child.querySelectorAll('li')].map((li) => li.textContent.trim()),
       });
-      continue; // eslint-disable-line no-continue
-    }
-
-    if (tag === 'ol') {
+      i += 1;
+    } else if (tag === 'ol') {
       out.push({
         type: 'fields',
         defs: [...child.querySelectorAll('li')].map((li) => parseFieldDef(li.textContent)),
       });
-      continue; // eslint-disable-line no-continue
-    }
-
-    if (tag === 'p') {
-      // Info notice: <p><em>…</em></p>
-      const em = child.querySelector('em');
-      if (em && em.textContent.trim() === child.textContent.trim()) {
-        out.push({ type: 'info', text: em.textContent.trim() });
-        continue; // eslint-disable-line no-continue
-      }
-
-      // Toggle: <p><strong>A | B</strong></p>
-      const strong = child.querySelector('strong');
-      if (strong && strong.textContent.includes('|')) {
-        out.push({
-          type: 'toggle',
-          options: strong.textContent.split('|').map((s) => s.trim()),
-        });
-        continue; // eslint-disable-line no-continue
-      }
-
-      // Links: <p><a>…</a> | <a>…</a></p>
-      const links = [...child.querySelectorAll('a')];
-      if (links.length) {
-        out.push({
-          type: 'links',
-          items: links.map((a) => ({
-            text: a.textContent.trim(),
-            href: a.getAttribute('href') || '#',
-          })),
-        });
-        continue; // eslint-disable-line no-continue
-      }
-
-      // Plain text
-      const txt = child.textContent.trim();
-      if (txt) out.push({ type: 'text', text: txt });
+      i += 1;
+    } else if (tag === 'p') {
+      const section = parseParagraphSection(child);
+      if (section) out.push(section);
+      i += 1;
+    } else {
+      i += 1;
     }
   }
 
@@ -276,6 +262,7 @@ function createFormHeader(text, accessories) {
 
   if (accessories && accessories.length) {
     const acc = document.createElement('div');
+    // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- CSS class name, not a credential
     acc.className = 'tabs-booking-cta-header-accessories';
 
     accessories.forEach((item) => {
