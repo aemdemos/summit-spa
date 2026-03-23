@@ -78,6 +78,7 @@
   min-height: 120px;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 5%);
 }
 
 .tabs-booking-cta-panel[hidden] {
@@ -204,9 +205,9 @@
   align-items: center;
   gap: 6px;
   font-family: var(--body-font-family);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  color: #666;
+  color: #000;
   cursor: pointer;
   white-space: nowrap;
   line-height: 20px;
@@ -214,8 +215,8 @@
 }
 
 .tabs-booking-cta-express-label input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   margin: 0;
   accent-color: #d4930d;
 }
@@ -262,9 +263,9 @@
 
 .tabs-booking-cta-radio-label input[type="radio"] {
   accent-color: #d4930d;
-  width: 16px;
-  height: 16px;
-  margin: 0;
+  width: 13px;
+  height: 13px;
+  margin: 3px 3px 0 5px;
 }
 
 .tabs-booking-cta-form-links {
@@ -385,7 +386,7 @@
   margin-left: -1px;
 }
 
-/* Airplane icon between From and To */
+/* Airplane icon between From and To (rotated 90° to point right, matching SIA) */
 .tabs-booking-cta-field-swap {
   display: flex;
   align-items: center;
@@ -399,7 +400,7 @@
   cursor: pointer;
   padding: 0 6px;
   min-width: 32px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z' transform='rotate(90 12 12)'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px 20px;
@@ -407,43 +408,66 @@
 
 .tabs-booking-cta-field-swap:hover {
   background-color: #f5f5f5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z' transform='rotate(90 12 12)'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px 20px;
 }
 
-/* Date fields — calendar icon hint */
+/* Date fields — calendar icon (exact SIA SVG) */
 .tabs-booking-cta-field-date {
   padding-right: 36px;
 }
 
 .tabs-booking-cta-field-date::after {
-  content: '\1F4C5';
+  content: '';
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 16px;
-  opacity: 0.4;
+  width: 17px;
+  height: 17px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOC45NyA0MCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNkZGQ7fTwvc3R5bGU+PC9kZWZzPjxnPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM2LDQuNEgzMS42VjIuMkEyLjA4LDIuMDgsMCwwLDAsMjkuNywwYTIuMDcsMi4wNywwLDAsMC0xLjksMi4yYzAsMS4yMSwwLDIuMiwwLDIuMkgxM1YyLjJBMi4wNywyLjA3LDAsMCwwLDExLjEsMCwyLjA4LDIuMDgsMCwwLDAsOS4yLDIuMmMwLDEuMjEsMCwyLjIsMCwyLjJsLTQuNDcuMDZhMi42NywyLjY3LDAsMCwwLTIuODUsMi40YzAsMS4zMiwwLDIuMzQsMCwyLjM0SDM4LjkzczAtMS4wOCwwLTIuNFMzNy41Miw0LjQsMzYsNC40WiIvPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iMTAiIHk9IjEyLjQiIHdpZHRoPSI3LjIiIGhlaWdodD0iNi44Ii8+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIxOS42IiB5PSIxMi40IiB3aWR0aD0iNy4yIiBoZWlnaHQ9IjYuOCIvPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iMjkuNiIgeT0iMTIuNCIgd2lkdGg9IjcuMiIgaGVpZ2h0PSI2LjgiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHk9IjIyLjQiIHdpZHRoPSI3LjIiIGhlaWdodD0iNy4yIi8+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIxMCIgeT0iMjIuNCIgd2lkdGg9IjcuMiIgaGVpZ2h0PSI3LjIiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjE5LjYiIHk9IjIyLjQiIHdpZHRoPSI3LjIiIGhlaWdodD0iNy4yIi8+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIyOS42IiB5PSIyMi40IiB3aWR0aD0iNy4yIiBoZWlnaHQ9IjcuMiIvPjxyZWN0IGNsYXNzPSJjbHMtMSIgeT0iMzIuNCIgd2lkdGg9IjcuMiIgaGVpZ2h0PSI3LjYiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjEwIiB5PSIzMi40IiB3aWR0aD0iNy4yIiBoZWlnaHQ9IjcuNiIvPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iMTkuNiIgeT0iMzIuNCIgd2lkdGg9IjcuMiIgaGVpZ2h0PSI3LjYiLz48L2c+PC9zdmc+");
+  background-repeat: no-repeat;
+  background-size: contain;
   pointer-events: none;
 }
 
-/* Select-style fields with dropdown arrow */
+/* Select-style fields with dropdown arrow (chevron SVG) */
 .tabs-booking-cta-field-select {
-  padding-right: 32px;
+  padding-right: 36px;
 }
 
 .tabs-booking-cta-field-arrow {
   position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Location pin icon for destination/placeholder fields */
+.tabs-booking-cta-field:not(.tabs-booking-cta-field-date):not(.tabs-booking-cta-field-select):has(.tabs-booking-cta-field-value.placeholder) {
+  padding-right: 36px;
+}
+
+.tabs-booking-cta-field:not(.tabs-booking-cta-field-date):not(.tabs-booking-cta-field-select):has(.tabs-booking-cta-field-value.placeholder)::after {
+  content: '';
+  position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid #666;
+  width: 15px;
+  height: 17px;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNy4xMSA0MC4wMiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNkZGQ7fTwvc3R5bGU+PC9kZWZzPjxnPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTEzLjU1LDBBMTMuNTUsMTMuNTUsMCwwLDAsMCwxMy41NWMwLC4xNywwLC4zMywwLC40OWExMy4zNiwxMy4zNiwwLDAsMCwuNzgsNC4wN0MzLjY4LDI3LjYyLDEzLjU1LDQwLDEzLjU1LDQwczkuODgtMTIuNCwxMi43Ny0yMS45MUExMy4zMSwxMy4zMSwwLDAsMCwyNy4xLDE0YzAtLjE2LDAtLjMyLDAtLjQ5QTEzLjU2LDEzLjU2LDAsMCwwLDEzLjU1LDBabTAsMjAuMTlhNi42NCw2LjY0LDAsMSwxLDYuNjQtNi42NEE2LjYzLDYuNjMsMCwwLDEsMTMuNTUsMjAuMTlaIi8+PC9nPjwvc3ZnPg==");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
 }
 
 /* ── Search button ── */
