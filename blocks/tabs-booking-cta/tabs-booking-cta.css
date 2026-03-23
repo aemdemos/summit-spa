@@ -698,7 +698,24 @@
 /* --- 992px+ (large screens) --- */
 @media (width >= 992px) {
   .tabs-booking-cta {
-    max-width: 960px;
+    max-width: 900px;
+  }
+
+  main .section.tabs-booking-cta-container > div {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+
+  main .section.tabs-booking-cta-container {
+    transform: translateY(-11rem);
+    position: relative;
+    background: transparent;
+    margin-right: auto;
+    margin-left: auto;
+    width:92%;
+    align-items: center;
+    margin-bottom: calc(-13rem + 30px);
   }
 }
 
