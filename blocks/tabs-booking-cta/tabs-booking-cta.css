@@ -17,7 +17,6 @@
 .tabs-booking-cta {
   padding: 0;
   min-height: 0;
-  max-width: 780px;
   margin: 0;
 }
 
@@ -718,7 +717,6 @@
 
 @media (width > 768px) {
   .tabs-booking-cta-tabs {
-    min-width: 900px;
     background: black;
   }
 
@@ -729,7 +727,6 @@
   }
 
   .tabs-booking-cta-panel {
-    min-width: 890px;
     padding-bottom: 45px;
   }
 
