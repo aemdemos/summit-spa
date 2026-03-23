@@ -18,13 +18,13 @@
   padding: 0;
   min-height: 0;
   max-width: 780px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 /* ── Tab bar ── */
 .tabs-booking-cta-tabs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 20%);
   height: 66px;
 }
 
@@ -74,8 +74,9 @@
 /* ── Tab panels ── */
 .tabs-booking-cta-panel {
   background-color: #fff;
-  padding: 24px 30px 30px;
+  padding: 1.875rem 2rem;
   min-height: 120px;
+  width:100%;
 }
 
 .tabs-booking-cta-panel[hidden] {
@@ -451,6 +452,12 @@
 
 /* --- Below 768px: mobile layout --- */
 @media (width < 768px) {
+  .tabs-booking-cta-panel {
+    padding: 1.875rem 2rem;
+  }
+
+
+
   .tabs-booking-cta {
     max-width: 100%;
   }
@@ -473,10 +480,6 @@
     letter-spacing: 0.5px;
     padding: 0 4px;
     height: 50px;
-  }
-
-  .tabs-booking-cta-panel {
-    padding: 16px;
   }
 
   .tabs-booking-cta-form-header h2 {
@@ -534,10 +537,11 @@
 
 /* --- 576px+ (larger phones) --- */
 @media (width >= 576px) and (width < 768px) {
-  .tabs-booking-cta-tab {
-    font-size: 10px;
-    letter-spacing: 0.8px;
-  }
+    .tabs-booking-cta-tab {
+      padding: 15px;
+      letter-spacing: 1.5px;
+    }
+  
 
   .tabs-booking-cta-panel {
     padding: 20px 24px;
@@ -545,6 +549,23 @@
 
   .tabs-booking-cta-form-header h2 {
     font-size: 18px;
+  }
+}
+
+@media (width > 768px) {
+  .tabs-booking-cta-tabs {
+    min-width: 900px;
+    background: black;
+  }
+
+  .tabs-booking-cta-tab {
+    padding: 12px;
+    letter-spacing: 1.5px;
+    font-weight:700;
+  }
+
+  .tabs-booking-cta-panel {
+    min-width: 830px;
   }
 }
 

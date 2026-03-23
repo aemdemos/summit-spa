@@ -378,9 +378,9 @@ main .section.navy > div {
 main .section.tabs-booking-cta-container {
   position: relative;
   z-index: 2;
-  margin-top: -40px; /* overlap gap, sit flush under navy bar */
-  margin-bottom: 0;
+  margin-top: -220px; /* sit flush under navy bar, remove section gap */
   padding: 0;
+  width: 100%;
 }
 
 /* Reset wrapper constraints */
@@ -389,13 +389,16 @@ main .section.tabs-booking-cta-container > div {
   padding: 0;
 }
 
+.tabs-booking-cta {
+  margin:0;
+}
+
 @media (width >= 992px){
   main .section.navy {
     padding-right: 10px;
     padding-left: 10px;
     margin: 0 auto;
     bottom: 410px;
-    
   }
 
   main .section.navy .default-content-wrapper {
