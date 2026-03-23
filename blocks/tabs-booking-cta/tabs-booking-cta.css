@@ -177,13 +177,14 @@
   text-decoration: none;
   border: 0;
   border-radius: 20px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   white-space: nowrap;
   letter-spacing: 0.3px;
   line-height: 1;
   cursor: pointer;
   margin: 0;
   text-transform: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 .tabs-booking-cta-express-badge::before {
@@ -203,16 +204,18 @@
   align-items: center;
   gap: 6px;
   font-family: var(--body-font-family);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
-  color: #333;
+  color: #666;
   cursor: pointer;
   white-space: nowrap;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
 }
 
 .tabs-booking-cta-express-label input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   margin: 0;
   accent-color: #d4930d;
 }
@@ -220,16 +223,16 @@
 /* BETA / tag badge */
 .tabs-booking-cta-badge-tag {
   display: inline-block;
-  background: #e8a020;
+  background: #FF9F00;
   color: #fff;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  line-height: 1;
+  letter-spacing: 1.5px;
+  padding: 0 6px;
+  line-height: 17px;
   vertical-align: middle;
+  border-radius: 10px;
 }
 
 /* ── Options row: radios + links ── */
@@ -237,7 +240,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  -webkit-font-smoothing: antialiased;
 }
 
 .tabs-booking-cta-form-radios {
@@ -334,7 +338,7 @@
 .tabs-booking-cta-field-value {
   font-family: var(--body-font-family);
   font-size: 16px;
-  font-weight: 400;
+  font-weight: bold;
   color: #333;
   line-height: 1.2;
 }
@@ -347,19 +351,20 @@
   display: inline-block;
   background: #333;
   color: #fff;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 2px;
-  font-size: 11px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.5px;
   vertical-align: middle;
   line-height: 1;
+  margin-left: 7px;
 }
 
 /* ── Field row grid (columns set dynamically by JS) ── */
 .tabs-booking-cta-form-row {
   display: grid;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .tabs-booking-cta-form-row:last-child {
@@ -680,7 +685,12 @@
   }
 
   .tabs-booking-cta-panel {
-    min-width: 830px;
+    min-width: 890px;
+  }
+
+  .tabs-booking-cta-header-accessories {
+    justify-content: space-between;
+    gap:120px;
   }
 }
 
