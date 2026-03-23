@@ -62,7 +62,7 @@ function parseFieldDef(text) {
  * "sections" the decorator can render.
  *
  * Recognised HTML authored in DA:
- *   <h2> / <h3>                → heading
+ *   <h2> / <h3>                → heading (+ optional subtitle from next <p>)
  *   <ul>                       → radio group (each <li> = one option)
  *   <ol>                       → field row   (each <li> = one field)
  *   <p><em>…</em></p>         → info notice
@@ -70,19 +70,67 @@ function parseFieldDef(text) {
  *   <p> with <a> links         → form links
  *   <p> plain text             → description paragraph
  *
+ * Consecutive <p> elements immediately after a heading are collected as
+ * "accessories" and rendered inside the form header:
+ *   <p><a href="…">…</a></p>                  → badge pill link
+ *   <p>text <strong>TAG</strong></p>           → checkbox + badge tag
+ *   <p>plain text</p>                          → checkbox
+ *
  * @param {Element} el Content column element
  * @returns {Object[]}
  */
 function parseFormContent(el) {
   if (!el) return [];
   const out = [];
+  const children = [...el.children];
 
-  [...el.children].forEach((child) => {
+  for (let i = 0; i < children.length; i += 1) {
+    // eslint-disable-next-line secure-coding/detect-object-injection
+    const child = children[i];
     const tag = child.tagName?.toLowerCase();
 
     if (tag === 'h2' || tag === 'h3') {
-      out.push({ type: 'heading', text: child.textContent.trim() });
-      return;
+      // Collect consecutive <p> accessories after the heading
+      const accessories = [];
+      while (i + 1 < children.length) {
+        // eslint-disable-next-line secure-coding/detect-object-injection
+        const next = children[i + 1];
+        if (next.tagName?.toLowerCase() !== 'p') break;
+        // Stop if it's a toggle (<strong> with |)
+        const strong = next.querySelector('strong');
+        if (strong && strong.textContent.includes('|')) break;
+        // Stop if it's an info notice (<em> only)
+        const em = next.querySelector('em');
+        if (em && em.textContent.trim() === next.textContent.trim()) break;
+        // Stop if it has multiple links (form links row)
+        const links = [...next.querySelectorAll('a')];
+        if (links.length > 1) break;
+
+        // Single link → badge pill
+        if (links.length === 1) {
+          accessories.push({
+            kind: 'badge',
+            text: links[0].textContent.trim(),
+            href: links[0].getAttribute('href') || '#',
+          });
+        } else {
+          // Plain text, possibly with <strong> badge tag
+          const badgeEl = next.querySelector('strong');
+          const badge = badgeEl ? badgeEl.textContent.trim() : '';
+          const fullText = next.textContent.trim();
+          const label = badge
+            ? fullText.replace(badge, '').trim()
+            : fullText;
+          accessories.push({ kind: 'checkbox', text: label, badge });
+        }
+        i += 1;
+      }
+      out.push({
+        type: 'heading',
+        text: child.textContent.trim(),
+        accessories,
+      });
+      continue; // eslint-disable-line no-continue
     }
 
     if (tag === 'ul') {
@@ -90,7 +138,7 @@ function parseFormContent(el) {
         type: 'radios',
         items: [...child.querySelectorAll('li')].map((li) => li.textContent.trim()),
       });
-      return;
+      continue; // eslint-disable-line no-continue
     }
 
     if (tag === 'ol') {
@@ -98,7 +146,7 @@ function parseFormContent(el) {
         type: 'fields',
         defs: [...child.querySelectorAll('li')].map((li) => parseFieldDef(li.textContent)),
       });
-      return;
+      continue; // eslint-disable-line no-continue
     }
 
     if (tag === 'p') {
@@ -106,7 +154,7 @@ function parseFormContent(el) {
       const em = child.querySelector('em');
       if (em && em.textContent.trim() === child.textContent.trim()) {
         out.push({ type: 'info', text: em.textContent.trim() });
-        return;
+        continue; // eslint-disable-line no-continue
       }
 
       // Toggle: <p><strong>A | B</strong></p>
@@ -116,7 +164,7 @@ function parseFormContent(el) {
           type: 'toggle',
           options: strong.textContent.split('|').map((s) => s.trim()),
         });
-        return;
+        continue; // eslint-disable-line no-continue
       }
 
       // Links: <p><a>…</a> | <a>…</a></p>
@@ -129,14 +177,14 @@ function parseFormContent(el) {
             href: a.getAttribute('href') || '#',
           })),
         });
-        return;
+        continue; // eslint-disable-line no-continue
       }
 
       // Plain text
       const txt = child.textContent.trim();
       if (txt) out.push({ type: 'text', text: txt });
     }
-  });
+  }
 
   return out;
 }
@@ -219,12 +267,43 @@ function createActionBtn(text, url) {
   return btn;
 }
 
-function createFormHeader(text) {
+function createFormHeader(text, accessories) {
   const hdr = document.createElement('div');
   hdr.className = 'tabs-booking-cta-form-header';
   const h2 = document.createElement('h2');
   h2.textContent = text;
   hdr.append(h2);
+
+  if (accessories && accessories.length) {
+    const acc = document.createElement('div');
+    acc.className = 'tabs-booking-cta-header-accessories';
+
+    accessories.forEach((item) => {
+      if (item.kind === 'badge') {
+        const a = document.createElement('a');
+        a.className = 'tabs-booking-cta-express-badge';
+        a.href = item.href;
+        a.textContent = item.text;
+        acc.append(a);
+      } else {
+        const label = document.createElement('label');
+        label.className = 'tabs-booking-cta-express-label';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        label.append(input, ` ${item.text}`);
+        if (item.badge) {
+          const tag = document.createElement('span');
+          tag.className = 'tabs-booking-cta-badge-tag';
+          tag.textContent = item.badge;
+          label.append(' ', tag);
+        }
+        acc.append(label);
+      }
+    });
+
+    hdr.append(acc);
+  }
+
   return hdr;
 }
 
@@ -377,7 +456,7 @@ function buildForm(sections, ctaUrl, ctaText) {
 
     switch (sec.type) {
       case 'heading':
-        form.append(createFormHeader(sec.text));
+        form.append(createFormHeader(sec.text, sec.accessories));
         break;
 
       case 'info':
