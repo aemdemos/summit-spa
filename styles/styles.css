@@ -278,7 +278,6 @@ main .section.light,
 main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
-  padding: 40px 0;
 }
 
 /* ----------------------------------------------------------------
