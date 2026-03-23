@@ -510,6 +510,15 @@ function buildForm(sections, ctaUrl, ctaText) {
     }
   });
 
+  // Group first two field rows so CSS can lay them side-by-side on desktop
+  const fieldRows = form.querySelectorAll('.tabs-booking-cta-form-row');
+  if (fieldRows.length >= 2) {
+    const group = document.createElement('div');
+    group.className = 'tabs-booking-cta-field-group';
+    fieldRows[0].before(group);
+    group.append(fieldRows[0], fieldRows[1]);
+  }
+
   return form;
 }
 

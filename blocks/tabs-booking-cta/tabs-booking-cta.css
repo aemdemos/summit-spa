@@ -361,6 +361,17 @@
   margin-left: 7px;
 }
 
+/* ── Field group (wraps first two rows, side-by-side on desktop) ── */
+.tabs-booking-cta-field-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.tabs-booking-cta-field-group .tabs-booking-cta-form-row {
+  margin-bottom: 0;
+}
+
 /* ── Field row grid (columns set dynamically by JS) ── */
 .tabs-booking-cta-form-row {
   display: grid;
@@ -717,6 +728,20 @@
 
   .tabs-booking-cta {
     max-width: none;
+  }
+
+  /* First two field rows side-by-side on desktop */
+  .tabs-booking-cta-field-group {
+    flex-direction: row;
+  }
+
+  .tabs-booking-cta-field-group > .tabs-booking-cta-form-row:first-child {
+    flex: 3;
+  }
+
+  .tabs-booking-cta-field-group > .tabs-booking-cta-form-row:last-child {
+    flex: 2;
+    margin-left: -1px;
   }
 }
 
