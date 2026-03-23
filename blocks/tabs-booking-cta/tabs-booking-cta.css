@@ -344,7 +344,7 @@
 }
 
 .tabs-booking-cta-field-value.placeholder {
-  color: #999;
+  font-weight: 400;
 }
 
 .tabs-booking-cta-field-code {
@@ -686,6 +686,7 @@
 
   .tabs-booking-cta-panel {
     min-width: 890px;
+    padding-bottom: 45px;
   }
 
   .tabs-booking-cta-header-accessories {
