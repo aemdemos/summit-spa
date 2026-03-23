@@ -266,8 +266,6 @@
     justify-content: center;
     gap: 4px;
     margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
   }
   
   footer .footer-legal-links a {
@@ -324,7 +322,6 @@
     border: 1px solid #ccc;
     border-radius: 50%;
     transition: border-color 0.2s ease;
-    margin-right:15px;
   }
   
   footer .footer-social a:hover {
@@ -368,10 +365,6 @@
     footer .footer-awards-row {
       padding: 0 20px;
     }
-
-    footer .footer-nav-column {
-      margin: 20px 0;
-    }
   }
   
   /* ===== Desktop (1182+) ===== */
@@ -381,7 +374,7 @@
     footer .footer-nav {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 40px;
+      gap: 1.25rem;
      margin: 0 auto;
       max-width: 1080px;
       padding: 3rem 0 30px;
