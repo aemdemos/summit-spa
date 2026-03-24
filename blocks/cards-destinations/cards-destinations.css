@@ -8,7 +8,13 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
-  margin-left: 40px;
+  margin-top:60px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CTA row — center button in the section column */
+.cards-destinations-container > .default-content-wrapper > p:last-child {
+  text-align: center;
 }
 
 /* "VIEW MORE DEALS" button */
@@ -31,7 +37,6 @@
   background-color: transparent;
   padding: 0;
   margin: 20px 0;
-  margin-left: 40px;
 }
 
 .cards-destinations-container > .default-content-wrapper > p:last-child a:hover {
@@ -48,8 +53,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  padding-right:40px;
-  margin-left: 40px;
 }
 
 /* Card — image with text overlay */
@@ -57,10 +60,12 @@
   position: relative;
   width: 220px;
   height: 221px;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 2px 4px 4px 0 rgb(0 0 0 / 10%);
   overflow: hidden;
   background-color: #808080;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  will-change: transform;
 }
 
 /* Image — fills entire card */
@@ -99,11 +104,14 @@
   left: 20px;
   z-index: 1;
   padding: 0;
-  max-width: 180px;
 }
 
-/* City name */
+/* City name + hover arrow (Singapore Airlines parity) */
 .cards-destinations > ul > li h3 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
   font-size: 22px;
   font-weight: 600;
@@ -111,7 +119,51 @@
   line-height: 28px;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.2px;
 }
+
+/* Circular arrow — hidden until hover/focus */
+.cards-destinations > ul > li h3::after {
+  content: "";
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23131313' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 10px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cards-destinations > ul > li:hover h3::after,
+.cards-destinations > ul > li:focus-within h3::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cards-destinations > ul > li:hover,
+  .cards-destinations > ul > li:focus-within {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cards-destinations > ul > li {
+    transition: none;
+  }
+
+  .cards-destinations > ul > li h3::after {
+    transition: none;
+  }
+}
+
+
 
 /* Cabin class & price */
 .cards-destinations > ul > li > div:last-child p {
@@ -139,5 +191,14 @@
 @media (width >= 600px) {
   .cards-destinations > ul > li {
     width: calc((100% - 40px) / 3);
+  }
+ 
+
+}
+
+
+@media (width > 992px) {
+  .cards-destinations > ul > li {
+    width: calc((100% - 80px) / 4);
   }
 }
