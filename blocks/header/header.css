@@ -90,7 +90,7 @@ header .header-toggle {
   padding: 0;
   cursor: pointer;
   width: 24px;
-  height: 8px;
+  height: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,7 +156,6 @@ header nav[aria-expanded='true'] .slide-panel {
 /* ==================== PANEL TOP (Help link) ==================== */
 header .panel-top {
   display: flex;
-  justify-content: flex-end;
   padding: 30px 30px 15px;
 }
 
