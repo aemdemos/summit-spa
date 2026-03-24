@@ -2,7 +2,7 @@
 
 /* nav wrapper */
 header .nav-wrapper {
-  background: linear-gradient(222.07deg, #003087 0%, #002B78 50%, #00266B 100%);
+  background: linear-gradient(315deg, #134297 0%, #0F3C8E 20%, #0B3785 40%, #07317C 60%, #032B74 80%, #00266B 100%);
   width: 100%;
   z-index: 50;
   position: relative;
@@ -536,13 +536,13 @@ body.nav-open {
 }
 
 /* larger screens: slightly wider panel, larger logo */
-@media (width >= 900px) {
+@media (width >= 768px) {
   header .header-bar {
-    padding: 0 32px;
+    padding: 0 20px;
   }
 
   header .nav-brand img {
-    width: 64px;
+    width: 83px;
   }
 }
 
@@ -568,7 +568,7 @@ header .desktop-header {
   display: block;
 }
 
-@media (width >= 1080px) {
+@media (width >= 1079px) {
   /* Hide mobile elements */
   header .header-bar {
     display: none;
@@ -592,7 +592,7 @@ header .desktop-header {
     display: flex;
     justify-content: flex-end;
     height: 31px;
-    padding: 0 20px;
+    padding: 0 10px;
   }
 
   header .desktop-utility-inner {
@@ -733,7 +733,7 @@ header .desktop-header {
   header .desktop-main-row {
     display: flex;
     height: 50px;
-    padding: 0 20px;
+    padding: 0 10px;
   }
 
   header .desktop-main-inner {
@@ -742,7 +742,7 @@ header .desktop-header {
     max-width: 1080px;
     width: 100%;
     margin: 0 auto;
-    gap: 32px;
+    gap: 26px;
   }
 
   /* Logo */
@@ -772,7 +772,7 @@ header .desktop-header {
     display: flex;
     align-items: center;
     height: 50px;
-    padding: 0 14px;
+    padding: 0 18px 0 0;
     font-size: 13px;
     font-weight: 400;
     color: #fff;
@@ -796,52 +796,24 @@ header .desktop-header {
     flex-shrink: 0;
   }
 
-  /* Search icon (CSS-only magnifying glass) */
+  /* Search icon — SVG magnifying glass matching original */
   header .desktop-search {
-    background: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z' fill='%23fff'/%3E%3C/svg%3E") no-repeat center / contain;
     border: none;
     padding: 0;
     cursor: pointer;
-    color: #fff;
     width: 20px;
     height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
+    vertical-align: middle;
   }
 
   header .desktop-search:hover {
-    color: #f99f1c;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z' fill='%23f99f1c'/%3E%3C/svg%3E");
   }
 
   header .search-icon {
-    display: block;
-    width: 16px;
-    height: 16px;
-    position: relative;
-  }
-
-  header .search-icon::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 11px;
-    height: 11px;
-    border: 1.5px solid currentcolor;
-    border-radius: 50%;
-  }
-
-  header .search-icon::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 6px;
-    height: 1.5px;
-    background: currentcolor;
-    transform: rotate(45deg);
-    transform-origin: bottom right;
+    display: none;
   }
 
   header .desktop-auth {
