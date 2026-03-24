@@ -31,7 +31,7 @@ header nav a:hover {
 
 /* ==================== HEADER BAR ==================== */
 header .header-bar {
-  display: block;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
@@ -607,6 +607,7 @@ body.nav-open {
 
   header .nav-brand img {
     width: 83px;
+    height:60px;
   }
 }
 
@@ -681,6 +682,7 @@ header .desktop-header {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     text-decoration: none;
+    -webkit-font-smoothing: antialiased;
   }
 
   header .utility-link:hover {
@@ -698,6 +700,7 @@ header .desktop-header {
     padding: 0;
     cursor: pointer;
     font-family: var(--body-font-family);
+    -webkit-font-smoothing: antialiased;
   }
 
   header .utility-locale:hover {
@@ -811,7 +814,7 @@ header .desktop-header {
     max-width: 1080px;
     width: 100%;
     margin: 0 auto;
-    gap: 26px;
+    gap:10px;
   }
 
   /* Logo */
@@ -822,8 +825,9 @@ header .desktop-header {
   }
 
   header .desktop-logo img {
-    width: 124px;
+    width: 150px;
     height: 46px;
+    margin-bottom: 24px;
   }
 
   /* --- Nav links --- */
@@ -840,7 +844,6 @@ header .desktop-header {
   header .desktop-nav-link {
     display: flex;
     align-items: center;
-    height: 50px;
     padding: 0 18px 0 0;
     font-size: 13px;
     font-weight: 400;
@@ -849,6 +852,8 @@ header .desktop-header {
     letter-spacing: 1px;
     text-decoration: none;
     white-space: nowrap;
+    margin-bottom: 20px;
+    -webkit-font-smoothing: antialiased;
   }
 
   header .desktop-nav-link:hover,
@@ -863,6 +868,8 @@ header .desktop-header {
     gap: 16px;
     margin-left: auto;
     flex-shrink: 0;
+    margin-bottom: 20px;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Search icon — SVG magnifying glass matching original */
@@ -986,15 +993,17 @@ header .desktop-header {
 
   header .megamenu-links a {
     display: block;
-    padding: 4px 0;
+    padding: 6px 0;
     font-size: 14px;
     font-weight: 400;
     color: #666;
     text-decoration: none;
+    border-bottom: 1px solid #8288944d;
+    -webkit-font-smoothing: antialiased;
   }
 
   header .megamenu-links a:hover {
-    color: #00266b;
+    color: #f99f1c;
   }
 
   /* "More" link with chevron */
