@@ -216,7 +216,6 @@ header .nav-list {
 header .nav-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   padding: 17px 0;
   font-size: 13px;
@@ -254,7 +253,7 @@ header .nav-item.has-subnav::after {
   border-bottom: 1.5px solid #789DDF;
   transform: rotate(-45deg);
   flex-shrink: 0;
-  margin-left: 12px;
+  margin-left: auto;
 }
 
 /* ==================== SUB-NAV PANEL ==================== */
