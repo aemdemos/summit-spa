@@ -15,6 +15,7 @@
 /* CTA row — center button in the section column */
 .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) {
   text-align: center;
+  position: relative;
 }
 
 /* "VIEW MORE DEALS" button */
@@ -43,6 +44,27 @@
   background-color: rgb(0 38 107 / 8%);
   color: #00266b;
   text-decoration: none;
+}
+
+/* Decorative lines flanking the button — left and right (hidden on mobile) */
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+  content: "";
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  width: 33.3333%;
+  background-color: #e5e9f0;
+}
+
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before {
+  left: 0;
+}
+
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+  right: 0;
 }
 
 /* Card grid */
@@ -192,26 +214,23 @@
   .cards-destinations > ul > li {
     width: calc((100% - 40px) / 3);
   }
- 
 
+  /* Show decorative lines on tablet */
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+    display: block;
+    width: 28%;
+  }
 }
-
 
 @media (width > 992px) {
   .cards-destinations > ul > li {
     width: calc((100% - 80px) / 4);
   }
-}
 
-/* Fare disclaimer text */
-.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) ~ p {
-  font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 1.5;
-  letter-spacing: normal;
-  color: #666;
-  text-align: center;
-  margin: 4px 0 0;
-  -webkit-font-smoothing: antialiased;
+  /* Wider decorative lines on desktop */
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+    width: 33.3333%;
+  }
 }
