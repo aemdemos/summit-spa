@@ -8,7 +8,7 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
-  margin-left: 40px;
+  margin-top:60px;
 }
 
 /* Card grid */
@@ -61,7 +61,29 @@
   font-weight: 600;
   color: #222;
   line-height: 20px;
-  margin: 0 0 8px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Heading link — inherit heading styles */
+.cards-highlights > ul > li h3 a {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+/* External-link icon — inline after heading on cards linking to external sites */
+.cards-highlights > ul > li.external h3::after {
+  content: "";
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-left: 4px;
+  vertical-align: middle;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23222' d='M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 /* Card description */
@@ -72,6 +94,7 @@
   color: #222;
   line-height: 20px;
   margin: 0 0 8px;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Card link */
@@ -83,4 +106,28 @@
 
 .cards-highlights > ul > li a:hover {
   text-decoration: underline;
+}
+
+
+@media (width > 768px) {
+  .cards-highlights > ul {
+    padding-right:0;
+    padding-left:0;
+  }
+
+  .cards-highlights > ul > li img {
+    height: 115px;
+  }
+}
+
+@media (width > 992px) {
+  .cards-highlights > ul > li img {
+    height: 154px;
+  }
+}
+
+@media (width > 1200px) {
+  .cards-highlights > ul > li img {
+    height: 180px;
+  }
 }

@@ -8,11 +8,18 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
-  margin-left: 40px;
+  margin-top:60px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CTA row — center button in the section column */
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) {
+  text-align: center;
+  position: relative;
 }
 
 /* "VIEW MORE DEALS" button */
-.cards-destinations-container > .default-content-wrapper > p:last-child a {
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) a {
   display: inline-block;
   width: 297px;
   max-width: 100%;
@@ -31,13 +38,34 @@
   background-color: transparent;
   padding: 0;
   margin: 20px 0;
-  margin-left: 40px;
+  margin-top:5px;
 }
 
-.cards-destinations-container > .default-content-wrapper > p:last-child a:hover {
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) a:hover {
   background-color: rgb(0 38 107 / 8%);
   color: #00266b;
   text-decoration: none;
+}
+
+/* Decorative lines flanking the button — left and right (hidden on mobile) */
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+  content: "";
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  width: 33.3333%;
+  background-color: #e5e9f0;
+}
+
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before {
+  left: 0;
+}
+
+.cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+  right: 0;
 }
 
 /* Card grid */
@@ -48,8 +76,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  padding-right:40px;
-  margin-left: 40px;
+  margin-right:-10px;
 }
 
 /* Card — image with text overlay */
@@ -57,10 +84,12 @@
   position: relative;
   width: 220px;
   height: 221px;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 2px 4px 4px 0 rgb(0 0 0 / 10%);
   overflow: hidden;
   background-color: #808080;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  will-change: transform;
 }
 
 /* Image — fills entire card */
@@ -99,11 +128,14 @@
   left: 20px;
   z-index: 1;
   padding: 0;
-  max-width: 180px;
 }
 
-/* City name */
+/* City name + hover arrow (Singapore Airlines parity) */
 .cards-destinations > ul > li h3 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
   font-size: 22px;
   font-weight: 600;
@@ -111,7 +143,51 @@
   line-height: 28px;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.2px;
 }
+
+/* Circular arrow — hidden until hover/focus */
+.cards-destinations > ul > li h3::after {
+  content: "";
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23131313' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 10px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cards-destinations > ul > li:hover h3::after,
+.cards-destinations > ul > li:focus-within h3::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cards-destinations > ul > li:hover,
+  .cards-destinations > ul > li:focus-within {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cards-destinations > ul > li {
+    transition: none;
+  }
+
+  .cards-destinations > ul > li h3::after {
+    transition: none;
+  }
+}
+
+
 
 /* Cabin class & price */
 .cards-destinations > ul > li > div:last-child p {
@@ -128,6 +204,17 @@
 .cards-destinations > ul > li > div:last-child p:first-of-type {
   font-size: 16px;
   line-height: 22px;
+  margin-bottom: 2px;
+}
+
+/* Price line — orange left accent (2nd paragraph) */
+.cards-destinations > ul > li > div:last-child p:nth-of-type(2) {
+  border-left: 2px solid #ff9f00;
+  box-sizing: border-box;
+  padding-left: 5px;
+  margin-right: 4px;
+  margin-bottom: 6px;
+  line-height: 14px;
 }
 
 /* "Book now" link — hidden; not present in original design */
@@ -139,5 +226,38 @@
 @media (width >= 600px) {
   .cards-destinations > ul > li {
     width: calc((100% - 40px) / 3);
+  }
+
+  /* Show decorative lines on tablet */
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+    display: block;
+    width: 28%;
+  }
+}
+
+@media (width > 992px) {
+  .cards-destinations > ul > li {
+    width: calc((100% - 80px) / 4);
+  }
+
+  /* Wider decorative lines on desktop */
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::before,
+  .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
+    width: 33.3333%;
+  }
+
+  .cards-destinations > ul > li > div:last-child p {
+    font-size: 16px;
+  }
+
+  .cards-destinations > ul > li > div:last-child p:first-of-type {
+  -webkit-font-smoothing: initial; 
+}
+}
+
+@media (width > 1200px) {
+  .cards-destinations > ul {
+    margin-right:-20px;
   }
 }
