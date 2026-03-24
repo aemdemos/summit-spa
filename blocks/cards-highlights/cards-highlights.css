@@ -61,7 +61,8 @@
   font-weight: 600;
   color: #222;
   line-height: 20px;
-  margin: 0 0 8px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Card description */
@@ -72,6 +73,7 @@
   color: #222;
   line-height: 20px;
   margin: 0 0 8px;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Card link */
@@ -90,5 +92,21 @@
   .cards-highlights > ul {
     padding-right:0;
     padding-left:0;
+  }
+
+  .cards-highlights > ul > li img {
+    height: 115px;
+  }
+}
+
+@media (width > 992px) {
+  .cards-highlights > ul > li img {
+    height: 154px;
+  }
+}
+
+@media (width > 1200px) {
+  .cards-highlights > ul > li img {
+    height: 180px;
   }
 }
