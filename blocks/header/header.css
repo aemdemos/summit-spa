@@ -31,7 +31,7 @@ header nav a:hover {
 
 /* ==================== HEADER BAR ==================== */
 header .header-bar {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: space-between;
   height: 60px;
@@ -64,15 +64,20 @@ header .header-right {
   gap: 16px;
 }
 
-/* user/login icon button — matches original profile-white.svg */
+/* user/login — solid navy tile + filled white silhouette (head + shoulders, gap between) */
 header .header-user-btn {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 150'%3E%3Ccircle cx='70' cy='45' r='30' fill='none' stroke='%23fff' stroke-width='8'/%3E%3Cpath d='M15 145c0-30 25-55 55-55s55 25 55 55' fill='none' stroke='%23fff' stroke-width='8'/%3E%3C/svg%3E") no-repeat center / contain;
-  border: none;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
   padding: 0;
+  border: none;
   cursor: pointer;
-  width: 18px;
-  height: 17px;
   display: block;
+  background-color: #00266b;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21 Q12 12 21 21 Z' fill='%23fff'/%3E%3Ccircle cx='12' cy='8' r='3.5' fill='%23fff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
 }
 
 header .header-user-btn .user-icon {
@@ -80,7 +85,13 @@ header .header-user-btn .user-icon {
 }
 
 header .header-user-btn:hover {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 150'%3E%3Ccircle cx='70' cy='45' r='30' fill='none' stroke='%23f99f1c' stroke-width='8'/%3E%3Cpath d='M15 145c0-30 25-55 55-55s55 25 55 55' fill='none' stroke='%23f99f1c' stroke-width='8'/%3E%3C/svg%3E");
+  background-color: #00266b;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21 Q12 12 21 21 Z' fill='%23f99f1c'/%3E%3Ccircle cx='12' cy='8' r='3.5' fill='%23f99f1c'/%3E%3C/svg%3E");
+}
+
+header .header-user-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 /* ==================== HAMBURGER TOGGLE ==================== */
@@ -94,7 +105,6 @@ header .header-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 header .toggle-icon,
@@ -142,7 +152,7 @@ header .slide-panel {
   right: 0;
   width: 348px;
   height: calc(100vh - 60px);
-  overflow-y: auto;
+  overflow: hidden auto;
   background: linear-gradient(270deg, #004EA4 0%, #002B78 100%);
   z-index: 8;
   display: none;
@@ -166,6 +176,7 @@ header .panel-help {
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  -webkit-font-smoothing: antialiased;
 }
 
 header .panel-help:hover {
@@ -214,7 +225,7 @@ header .nav-list {
 }
 
 header .nav-item {
-  display: flex;
+  display: block;
   align-items: center;
   width: 100%;
   padding: 17px 0;
@@ -240,20 +251,27 @@ header .nav-item:last-child {
 }
 
 header .nav-item:hover {
+  color: #f99f1c;
   background: rgb(255 255 255 / 5%);
+}
+
+header .nav-item.has-subnav:hover::after {
+  border-right-color: #f99f1c;
+  border-bottom-color: #f99f1c;
 }
 
 /* chevron arrow for items with subnav */
 header .nav-item.has-subnav::after {
   content: '';
   display: block;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-right: 1.5px solid #789DDF;
   border-bottom: 1.5px solid #789DDF;
   transform: rotate(-45deg);
   flex-shrink: 0;
-  margin-left: auto;
+  float:right;
+  margin-right:2px;
 }
 
 /* ==================== SUB-NAV PANEL ==================== */
@@ -268,15 +286,21 @@ header .subnav-panel {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  z-index: 2;
-}
-
-header .subnav-panel[aria-hidden='true'] {
-  display: none;
+  z-index: 10;
+  transform: translateX(100%);
+  pointer-events: none;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 header .subnav-panel[aria-hidden='false'] {
-  display: flex;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header .subnav-panel {
+    transition-duration: 0.01ms;
+  }
 }
 
 /* back button */
@@ -293,9 +317,10 @@ header .subnav-back {
   text-transform: uppercase;
   letter-spacing: 1.2px;
   background: rgb(255 255 255 / 10%);
-  border: none;
   cursor: pointer;
   font-family: var(--body-font-family);
+  border-radius:0;
+  -webkit-font-smoothing: antialiased;
 }
 
 header .subnav-back:hover {
@@ -329,6 +354,11 @@ header .subnav-category {
   border-top: 1px solid rgb(120 157 223 / 40%);
 }
 
+/* First category follows .subnav-heading, not :first-child of the panel */
+header .subnav-heading + .subnav-category {
+  border-top: none;
+}
+
 header .subnav-category:last-child {
   border-bottom: 1px solid rgb(120 157 223 / 40%);
 }
@@ -339,7 +369,7 @@ header .subnav-cat-btn {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 12px 30px;
+  padding:0 30px;
   font-size: 13px;
   font-weight: 400;
   color: #fff;
@@ -350,11 +380,11 @@ header .subnav-cat-btn {
   cursor: pointer;
   font-family: var(--body-font-family);
   text-align: left;
+  -webkit-font-smoothing: antialiased;
+  margin-top:20px;
+  margin-bottom:20px;
 }
 
-header .subnav-cat-btn:hover {
-  background: rgb(255 255 255 / 5%);
-}
 
 /* chevron on category button */
 header .subnav-cat-btn::after {
@@ -410,6 +440,7 @@ header .subnav-link {
   color: #fff;
   text-decoration: none;
   letter-spacing: 0.22px;
+  -webkit-font-smoothing: antialiased;
 }
 
 header .subnav-link:hover {
