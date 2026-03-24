@@ -8,7 +8,7 @@
   padding-left: 10px;
   margin: 24px 0;
   line-height: normal;
-  margin-left: 40px;
+  margin-top:60px;
 }
 
 /* Card grid */
@@ -83,4 +83,12 @@
 
 .cards-highlights > ul > li a:hover {
   text-decoration: underline;
+}
+
+
+@media (width > 768px) {
+  .cards-highlights > ul {
+    padding-right:0;
+    padding-left:0;
+  }
 }
