@@ -38,6 +38,7 @@
   background-color: transparent;
   padding: 0;
   margin: 20px 0;
+  margin-top:5px;
 }
 
 .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child) a:hover {
@@ -202,6 +203,17 @@
 .cards-destinations > ul > li > div:last-child p:first-of-type {
   font-size: 16px;
   line-height: 22px;
+  margin-bottom: 2px;
+}
+
+/* Price line — orange left accent (2nd paragraph) */
+.cards-destinations > ul > li > div:last-child p:nth-of-type(2) {
+  border-left: 2px solid #ff9f00;
+  box-sizing: border-box;
+  padding-left: 5px;
+  margin-right: 4px;
+  margin-bottom: 6px;
+  line-height: 14px;
 }
 
 /* "Book now" link — hidden; not present in original design */
@@ -233,4 +245,12 @@
   .cards-destinations-container > .default-content-wrapper > p:has(> a:only-child)::after {
     width: 33.3333%;
   }
+
+  .cards-destinations > ul > li > div:last-child p {
+    font-size: 16px;
+  }
+
+  .cards-destinations > ul > li > div:last-child p:first-of-type {
+  -webkit-font-smoothing: initial; 
+}
 }
