@@ -57,18 +57,81 @@ function parseFieldDef(text) {
    Content column parser
    ═══════════════════════════════════════════ */
 
+/** Parse a single <p> accessory (after a heading) into badge or checkbox. */
+function parseAccessoryParagraph(pEl) {
+  const links = [...pEl.querySelectorAll('a')];
+  if (links.length === 1) {
+    return {
+      kind: 'badge',
+      text: links[0].textContent.trim(),
+      href: links[0].getAttribute('href') || '#',
+    };
+  }
+  const badgeEl = pEl.querySelector('strong');
+  const badge = badgeEl ? badgeEl.textContent.trim() : '';
+  const fullText = pEl.textContent.trim();
+  const label = badge ? fullText.replace(badge, '').trim() : fullText;
+  return { kind: 'checkbox', text: label, badge };
+}
+
+/** True if <p> should end accessory collection (toggle, info, or links row). */
+function isAccessoryBoundary(pEl) {
+  const strong = pEl.querySelector('strong');
+  if (strong && strong.textContent.includes('|')) return true;
+  const em = pEl.querySelector('em');
+  if (em && em.textContent.trim() === pEl.textContent.trim()) return true;
+  if (pEl.querySelectorAll('a').length > 1) return true;
+  return false;
+}
+
+/** Parse a <p> into a section (info, toggle, links, text) or null. */
+function parseParagraphSection(pEl) {
+  const em = pEl.querySelector('em');
+  if (em && em.textContent.trim() === pEl.textContent.trim()) {
+    return { type: 'info', text: em.textContent.trim() };
+  }
+  const strong = pEl.querySelector('strong');
+  if (strong && strong.textContent.includes('|')) {
+    return {
+      type: 'toggle',
+      options: strong.textContent.split('|').map((s) => s.trim()),
+    };
+  }
+  const links = [...pEl.querySelectorAll('a')];
+  if (links.length) {
+    return {
+      type: 'links',
+      items: links.map((a) => ({
+        text: a.textContent.trim(),
+        href: a.getAttribute('href') || '#',
+      })),
+    };
+  }
+  const txt = pEl.textContent.trim();
+  return txt ? { type: 'text', text: txt } : null;
+}
+
+/** Process heading (h2/h3) and collect accessories, return { section, nextIdx }. */
+function parseHeadingSection(children, i) {
+  // eslint-disable-next-line secure-coding/detect-object-injection
+  const child = children[i];
+  const accessories = [];
+  let idx = i + 1;
+  while (idx < children.length) {
+    // eslint-disable-next-line secure-coding/detect-object-injection
+    const next = children[idx];
+    if (next.tagName?.toLowerCase() !== 'p' || isAccessoryBoundary(next)) break;
+    accessories.push(parseAccessoryParagraph(next));
+    idx += 1;
+  }
+  return {
+    section: { type: 'heading', text: child.textContent.trim(), accessories },
+    nextIdx: idx - 1,
+  };
+}
+
 /**
- * Reads the content column of a tab and returns an ordered list of form
- * "sections" the decorator can render.
- *
- * Recognised HTML authored in DA:
- *   <h2> / <h3>                → heading
- *   <ul>                       → radio group (each <li> = one option)
- *   <ol>                       → field row   (each <li> = one field)
- *   <p><em>…</em></p>         → info notice
- *   <p><strong>A | B</strong> → toggle buttons
- *   <p> with <a> links         → form links
- *   <p> plain text             → description paragraph
+ * Reads the content column of a tab and returns an ordered list of form sections.
  *
  * @param {Element} el Content column element
  * @returns {Object[]}
@@ -76,67 +139,38 @@ function parseFieldDef(text) {
 function parseFormContent(el) {
   if (!el) return [];
   const out = [];
+  const children = [...el.children];
+  let i = 0;
 
-  [...el.children].forEach((child) => {
+  while (i < children.length) {
+    // eslint-disable-next-line secure-coding/detect-object-injection
+    const child = children[i];
     const tag = child.tagName?.toLowerCase();
 
     if (tag === 'h2' || tag === 'h3') {
-      out.push({ type: 'heading', text: child.textContent.trim() });
-      return;
-    }
-
-    if (tag === 'ul') {
+      const { section, nextIdx } = parseHeadingSection(children, i);
+      out.push(section);
+      i = nextIdx + 1;
+    } else if (tag === 'ul') {
       out.push({
         type: 'radios',
         items: [...child.querySelectorAll('li')].map((li) => li.textContent.trim()),
       });
-      return;
-    }
-
-    if (tag === 'ol') {
+      i += 1;
+    } else if (tag === 'ol') {
       out.push({
         type: 'fields',
         defs: [...child.querySelectorAll('li')].map((li) => parseFieldDef(li.textContent)),
       });
-      return;
+      i += 1;
+    } else if (tag === 'p') {
+      const section = parseParagraphSection(child);
+      if (section) out.push(section);
+      i += 1;
+    } else {
+      i += 1;
     }
-
-    if (tag === 'p') {
-      // Info notice: <p><em>…</em></p>
-      const em = child.querySelector('em');
-      if (em && em.textContent.trim() === child.textContent.trim()) {
-        out.push({ type: 'info', text: em.textContent.trim() });
-        return;
-      }
-
-      // Toggle: <p><strong>A | B</strong></p>
-      const strong = child.querySelector('strong');
-      if (strong && strong.textContent.includes('|')) {
-        out.push({
-          type: 'toggle',
-          options: strong.textContent.split('|').map((s) => s.trim()),
-        });
-        return;
-      }
-
-      // Links: <p><a>…</a> | <a>…</a></p>
-      const links = [...child.querySelectorAll('a')];
-      if (links.length) {
-        out.push({
-          type: 'links',
-          items: links.map((a) => ({
-            text: a.textContent.trim(),
-            href: a.getAttribute('href') || '#',
-          })),
-        });
-        return;
-      }
-
-      // Plain text
-      const txt = child.textContent.trim();
-      if (txt) out.push({ type: 'text', text: txt });
-    }
-  });
+  }
 
   return out;
 }
@@ -219,12 +253,44 @@ function createActionBtn(text, url) {
   return btn;
 }
 
-function createFormHeader(text) {
+function createFormHeader(text, accessories) {
   const hdr = document.createElement('div');
   hdr.className = 'tabs-booking-cta-form-header';
   const h2 = document.createElement('h2');
   h2.textContent = text;
   hdr.append(h2);
+
+  if (accessories && accessories.length) {
+    const acc = document.createElement('div');
+    // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- CSS class name, not a credential
+    acc.className = 'tabs-booking-cta-header-accessories';
+
+    accessories.forEach((item) => {
+      if (item.kind === 'badge') {
+        const a = document.createElement('a');
+        a.className = 'tabs-booking-cta-express-badge';
+        a.href = item.href;
+        a.textContent = item.text;
+        acc.append(a);
+      } else {
+        const label = document.createElement('label');
+        label.className = 'tabs-booking-cta-express-label';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        label.append(input, ` ${item.text}`);
+        if (item.badge) {
+          const tag = document.createElement('span');
+          tag.className = 'tabs-booking-cta-badge-tag';
+          tag.textContent = item.badge;
+          label.append(' ', tag);
+        }
+        acc.append(label);
+      }
+    });
+
+    hdr.append(acc);
+  }
+
   return hdr;
 }
 
@@ -377,7 +443,7 @@ function buildForm(sections, ctaUrl, ctaText) {
 
     switch (sec.type) {
       case 'heading':
-        form.append(createFormHeader(sec.text));
+        form.append(createFormHeader(sec.text, sec.accessories));
         break;
 
       case 'info':
@@ -430,6 +496,15 @@ function buildForm(sections, ctaUrl, ctaText) {
         break;
     }
   });
+
+  // Group first two field rows so CSS can lay them side-by-side on desktop
+  const fieldRows = form.querySelectorAll('.tabs-booking-cta-form-row');
+  if (fieldRows.length >= 2) {
+    const group = document.createElement('div');
+    group.className = 'tabs-booking-cta-field-group';
+    fieldRows[0].before(group);
+    group.append(fieldRows[0], fieldRows[1]);
+  }
 
   return form;
 }
