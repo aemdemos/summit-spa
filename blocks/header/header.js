@@ -333,7 +333,15 @@ function buildPanelBottom(toolsDiv) {
     localeDiv.classList.add('panel-locale');
     const locale = document.createElement('button');
     locale.classList.add('locale-btn');
-    locale.textContent = tools.localeText;
+    const globeSpan = document.createElement('span');
+    globeSpan.classList.add('locale-globe');
+    locale.append(globeSpan);
+    const localeLabel = document.createElement('span');
+    localeLabel.textContent = tools.localeText;
+    locale.append(localeLabel);
+    const chevronSpan = document.createElement('span');
+    chevronSpan.classList.add('locale-chevron');
+    locale.append(chevronSpan);
     localeDiv.append(locale);
     panelBottom.append(localeDiv);
   }
@@ -355,6 +363,22 @@ function buildSlidePanel(brandNavDiv, toolsDiv, nav) {
     panelTop.append(help);
   }
   slidePanel.append(panelTop);
+
+  // Search box
+  if (tools.hasSearch) {
+    const searchWrap = document.createElement('div');
+    searchWrap.classList.add('panel-search');
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.classList.add('panel-search-input');
+    searchInput.setAttribute('placeholder', 'Ask a question');
+    searchWrap.append(searchInput);
+    const searchBtn = document.createElement('button');
+    searchBtn.classList.add('panel-search-btn');
+    searchBtn.setAttribute('aria-label', 'Search');
+    searchWrap.append(searchBtn);
+    slidePanel.append(searchWrap);
+  }
 
   // Main nav items list
   const navList = document.createElement('div');
