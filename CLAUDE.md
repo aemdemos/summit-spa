@@ -67,5 +67,11 @@ Read and follow the complete workflow in `.claude/skills/excat-navigation-orches
 
 1. **Every page gets its own template.** Always create a dedicated `templates/<slug>/<slug>.css` for each migrated page. Never reuse an existing template unless the user explicitly asks to. Page-specific styling (spacing, colors, heading sizes) belongs in the template CSS, not in `styles/styles.css`.
 
+2. **Mobile header icon order must match original site.** When building the mobile header bar (<1079px), replicate the exact icon order from the source site. For SIA: left = logo, right = bell (alert) → user → hamburger. Never place utility icons (bell, notifications) next to the logo on the left — they belong in `.header-right` alongside user and hamburger.
+
+3. **User profile icon must be a filled silhouette, not an outline.** The SIA `profile-white.svg` is a solid white circle (head) + solid white arc (shoulders) on a dark navy circle background. Always use `fill` paths, never `stroke`-only outlines. The same applies to hover state (swap `%23fff` to `%23f99f1c`).
+
+4. **Mobile header must include all utility icons visible on the source site's mobile view.** If the original mobile header shows a bell/alert icon, it must also appear in the migrated mobile header — not only at desktop. Check the source site at mobile viewport before finalising the header bar structure.
+
 
 ## Migration Learnings section END
