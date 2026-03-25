@@ -717,6 +717,103 @@ function attachMegamenuBehavior(desktopHeader) {
   });
 }
 
+async function fetchLocaleData() {
+  try {
+    const resp = await fetch('/locales.json');
+    if (!resp.ok) return [];
+    const json = await resp.json();
+    return (json.data || []).map((row) => ({
+      region: row.region,
+      locales: row.locales.split(',').map((l) => l.trim()).filter(Boolean),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function buildLocalePopup() {
+  const popup = document.createElement('div');
+  popup.classList.add('locale-popup');
+  popup.setAttribute('aria-hidden', 'true');
+
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('locale-popup-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+  popup.append(closeBtn);
+
+  const content = document.createElement('div');
+  content.classList.add('locale-popup-content');
+
+  const heading = document.createElement('h2');
+  heading.classList.add('locale-popup-heading');
+  heading.textContent = 'Select location and language';
+  content.append(heading);
+
+  popup.append(content);
+
+  closeBtn.addEventListener('click', () => {
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('locale-open');
+  });
+
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) {
+      popup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locale-open');
+    }
+  });
+
+  return popup;
+}
+
+async function openLocalePopup(popup) {
+  const content = popup.querySelector('.locale-popup-content');
+  // Only fetch data once
+  if (!popup.dataset.loaded) {
+    const regions = await fetchLocaleData();
+    regions.forEach((region) => {
+      const section = document.createElement('div');
+      section.classList.add('locale-region');
+
+      const regionHeading = document.createElement('div');
+      regionHeading.classList.add('locale-region-heading');
+      regionHeading.textContent = region.region;
+      section.append(regionHeading);
+
+      const grid = document.createElement('div');
+      grid.classList.add('locale-grid');
+
+      // Split locales into 3 columns (top-to-bottom flow like original)
+      const total = region.locales.length;
+      const colCount = 3;
+      const base = Math.floor(total / colCount);
+      const extra = total % colCount;
+      let offset = 0;
+      for (let c = 0; c < colCount; c += 1) {
+        const size = base + (c < extra ? 1 : 0);
+        if (size === 0) break;
+        const col = document.createElement('div');
+        col.classList.add('locale-column');
+        for (let i = 0; i < size; i += 1) {
+          const btn = document.createElement('button');
+          btn.classList.add('locale-option');
+          btn.textContent = region.locales[offset + i];
+          col.append(btn);
+        }
+        offset += size;
+        grid.append(col);
+      }
+
+      section.append(grid);
+      content.append(section);
+    });
+    popup.dataset.loaded = 'true';
+  }
+
+  popup.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('locale-open');
+}
+
 /**
  * loads and decorates the header
  * @param {Element} block The header block element
@@ -755,6 +852,22 @@ export default async function decorate(block) {
   document.body.append(overlay);
 
   window.addEventListener('keydown', closeOnEscape);
+
+  // Locale popup
+  const localePopup = buildLocalePopup();
+  document.body.append(localePopup);
+
+  // Wire all locale buttons to open popup
+  nav.querySelectorAll('.locale-btn, .utility-locale').forEach((btn) => {
+    btn.addEventListener('click', () => openLocalePopup(localePopup));
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && localePopup.getAttribute('aria-hidden') === 'false') {
+      localePopup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locale-open');
+    }
+  });
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
