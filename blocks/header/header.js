@@ -278,7 +278,13 @@ function buildHeaderBar(brandNavDiv, toolsDiv, nav) {
     navBrand.append(logo);
   }
 
-  // Alert bell — left side, next to logo
+  headerBar.append(navBrand);
+
+  // Header right icons — order: bell, user, hamburger (matches original)
+  const headerRight = document.createElement('div');
+  headerRight.classList.add('header-right');
+
+  // Alert bell
   const tools = findToolElements(toolsDiv);
   if (tools.alertBadge !== null) {
     const alertBtn = document.createElement('button');
@@ -293,14 +299,8 @@ function buildHeaderBar(brandNavDiv, toolsDiv, nav) {
       badge.textContent = tools.alertBadge;
       alertBtn.append(badge);
     }
-    navBrand.append(alertBtn);
+    headerRight.append(alertBtn);
   }
-
-  headerBar.append(navBrand);
-
-  // Header right icons
-  const headerRight = document.createElement('div');
-  headerRight.classList.add('header-right');
 
   // User/Login icon
   const userBtn = document.createElement('button');
