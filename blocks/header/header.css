@@ -852,7 +852,7 @@ header .desktop-header {
     letter-spacing: 1px;
     text-decoration: none;
     white-space: nowrap;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -952,7 +952,8 @@ header .desktop-header {
   header .megamenu-inner {
     max-width: 1080px;
     margin: 0 auto;
-    padding: 32px 20px;
+    padding: 20px;
+    padding-bottom: 32px;
   }
 
   header .megamenu-grid {
@@ -965,15 +966,18 @@ header .desktop-header {
     font-size: 16px;
     font-weight: 600;
     color: #00266b;
-    margin: 0 0 12px;
+    margin: 0;
     font-family: var(--body-font-family);
     text-transform: none;
     letter-spacing: normal;
+    border-bottom: 1px solid #8288944d;
+    padding: 8px 0;
   }
 
   header .megamenu-heading a {
-    color: #00266b;
     text-decoration: none;
+    font-family: proxima-nova, "Open Sans", arial, helvetica, sans-serif;
+    line-height: 16px;
   }
 
   header .megamenu-heading a:hover {
@@ -993,7 +997,7 @@ header .desktop-header {
 
   header .megamenu-links a {
     display: block;
-    padding: 6px 0;
+    padding: 8px 0;
     font-size: 14px;
     font-weight: 400;
     color: #666;
