@@ -264,7 +264,7 @@ function createUserIcon() {
   return icon;
 }
 
-function buildHeaderBar(brandNavDiv, nav) {
+function buildHeaderBar(brandNavDiv, toolsDiv, nav) {
   const headerBar = document.createElement('div');
   headerBar.classList.add('header-bar');
 
@@ -277,6 +277,25 @@ function buildHeaderBar(brandNavDiv, nav) {
     logo.classList.add('nav-logo');
     navBrand.append(logo);
   }
+
+  // Alert bell — left side, next to logo
+  const tools = findToolElements(toolsDiv);
+  if (tools.alertBadge !== null) {
+    const alertBtn = document.createElement('button');
+    alertBtn.classList.add('mobile-alert');
+    alertBtn.setAttribute('aria-label', 'News alerts');
+    const alertIcon = document.createElement('span');
+    alertIcon.classList.add('alert-icon');
+    alertBtn.append(alertIcon);
+    if (tools.alertBadge) {
+      const badge = document.createElement('span');
+      badge.classList.add('alert-badge');
+      badge.textContent = tools.alertBadge;
+      alertBtn.append(badge);
+    }
+    navBrand.append(alertBtn);
+  }
+
   headerBar.append(navBrand);
 
   // Header right icons
@@ -842,7 +861,7 @@ export default async function decorate(block) {
   nav.setAttribute('aria-label', 'Main navigation');
   nav.setAttribute('aria-expanded', 'false');
 
-  nav.append(buildHeaderBar(brandNavDiv, nav));
+  nav.append(buildHeaderBar(brandNavDiv, toolsDiv, nav));
   buildSlidePanel(brandNavDiv, toolsDiv, nav);
 
   // Desktop horizontal nav (>= 1080px)
