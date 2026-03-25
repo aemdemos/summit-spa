@@ -264,7 +264,7 @@ function createUserIcon() {
   return icon;
 }
 
-function buildHeaderBar(brandNavDiv, nav) {
+function buildHeaderBar(brandNavDiv, toolsDiv, nav) {
   const headerBar = document.createElement('div');
   headerBar.classList.add('header-bar');
 
@@ -277,11 +277,30 @@ function buildHeaderBar(brandNavDiv, nav) {
     logo.classList.add('nav-logo');
     navBrand.append(logo);
   }
+
   headerBar.append(navBrand);
 
-  // Header right icons
+  // Header right icons — order: bell, user, hamburger (matches original)
   const headerRight = document.createElement('div');
   headerRight.classList.add('header-right');
+
+  // Alert bell
+  const tools = findToolElements(toolsDiv);
+  if (tools.alertBadge !== null) {
+    const alertBtn = document.createElement('button');
+    alertBtn.classList.add('mobile-alert');
+    alertBtn.setAttribute('aria-label', 'News alerts');
+    const alertIcon = document.createElement('span');
+    alertIcon.classList.add('alert-icon');
+    alertBtn.append(alertIcon);
+    if (tools.alertBadge) {
+      const badge = document.createElement('span');
+      badge.classList.add('alert-badge');
+      badge.textContent = tools.alertBadge;
+      alertBtn.append(badge);
+    }
+    headerRight.append(alertBtn);
+  }
 
   // User/Login icon
   const userBtn = document.createElement('button');
@@ -333,7 +352,15 @@ function buildPanelBottom(toolsDiv) {
     localeDiv.classList.add('panel-locale');
     const locale = document.createElement('button');
     locale.classList.add('locale-btn');
-    locale.textContent = tools.localeText;
+    const globeSpan = document.createElement('span');
+    globeSpan.classList.add('locale-globe');
+    locale.append(globeSpan);
+    const localeLabel = document.createElement('span');
+    localeLabel.textContent = tools.localeText;
+    locale.append(localeLabel);
+    const chevronSpan = document.createElement('span');
+    chevronSpan.classList.add('locale-chevron');
+    locale.append(chevronSpan);
     localeDiv.append(locale);
     panelBottom.append(localeDiv);
   }
@@ -355,6 +382,22 @@ function buildSlidePanel(brandNavDiv, toolsDiv, nav) {
     panelTop.append(help);
   }
   slidePanel.append(panelTop);
+
+  // Search box
+  if (tools.hasSearch) {
+    const searchWrap = document.createElement('div');
+    searchWrap.classList.add('panel-search');
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.classList.add('panel-search-input');
+    searchInput.setAttribute('placeholder', 'Ask a question');
+    searchWrap.append(searchInput);
+    const searchBtn = document.createElement('button');
+    searchBtn.classList.add('panel-search-btn');
+    searchBtn.setAttribute('aria-label', 'Search');
+    searchWrap.append(searchBtn);
+    slidePanel.append(searchWrap);
+  }
 
   // Main nav items list
   const navList = document.createElement('div');
@@ -693,6 +736,107 @@ function attachMegamenuBehavior(desktopHeader) {
   });
 }
 
+function parseLocaleData(localeDiv) {
+  if (!localeDiv) return { heading: '', locales: [] };
+  const inner = localeDiv.querySelector(':scope > div') || localeDiv;
+  const heading = inner.querySelector('h2')?.textContent || '';
+  const locales = [];
+  const h3s = inner.querySelectorAll('h3');
+  h3s.forEach((h3) => {
+    const p = h3.nextElementSibling;
+    if (p && p.tagName === 'P') {
+      locales.push({
+        region: h3.textContent,
+        locales: p.textContent.split(',').map((l) => l.trim()).filter(Boolean),
+      });
+    }
+  });
+  return { heading, locales };
+}
+
+function buildLocalePopup() {
+  const popup = document.createElement('div');
+  popup.classList.add('locale-popup');
+  popup.setAttribute('aria-hidden', 'true');
+
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('locale-popup-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+  popup.append(closeBtn);
+
+  const content = document.createElement('div');
+  content.classList.add('locale-popup-content');
+
+  const heading = document.createElement('h2');
+  heading.classList.add('locale-popup-heading');
+  content.append(heading);
+
+  popup.append(content);
+
+  closeBtn.addEventListener('click', () => {
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('locale-open');
+  });
+
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) {
+      popup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locale-open');
+    }
+  });
+
+  return popup;
+}
+
+function populateLocalePopup(popup, localeData) {
+  const content = popup.querySelector('.locale-popup-content');
+  const { heading, locales: regions } = localeData;
+  if (heading) {
+    popup.querySelector('.locale-popup-heading').textContent = heading;
+  }
+  regions.forEach((region) => {
+    const section = document.createElement('div');
+    section.classList.add('locale-region');
+
+    const regionHeading = document.createElement('div');
+    regionHeading.classList.add('locale-region-heading');
+    regionHeading.textContent = region.region;
+    section.append(regionHeading);
+
+    const grid = document.createElement('div');
+    grid.classList.add('locale-grid');
+
+    // Split locales into 3 columns (top-to-bottom flow like original)
+    const total = region.locales.length;
+    const colCount = 3;
+    const base = Math.floor(total / colCount);
+    const extra = total % colCount;
+    let offset = 0;
+    for (let c = 0; c < colCount; c += 1) {
+      const size = base + (c < extra ? 1 : 0);
+      if (size === 0) break;
+      const col = document.createElement('div');
+      col.classList.add('locale-column');
+      for (let i = 0; i < size; i += 1) {
+        const btn = document.createElement('button');
+        btn.classList.add('locale-option');
+        btn.textContent = region.locales[offset + i];
+        col.append(btn);
+      }
+      offset += size;
+      grid.append(col);
+    }
+
+    section.append(grid);
+    content.append(section);
+  });
+}
+
+function openLocalePopup(popup) {
+  popup.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('locale-open');
+}
+
 /**
  * loads and decorates the header
  * @param {Element} block The header block element
@@ -710,13 +854,14 @@ export default async function decorate(block) {
   const topDivs = wrapper.querySelectorAll(':scope > div');
   const brandNavDiv = topDivs[0];
   const toolsDiv = topDivs[1];
+  const localeDiv = topDivs[2];
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
   nav.setAttribute('aria-label', 'Main navigation');
   nav.setAttribute('aria-expanded', 'false');
 
-  nav.append(buildHeaderBar(brandNavDiv, nav));
+  nav.append(buildHeaderBar(brandNavDiv, toolsDiv, nav));
   buildSlidePanel(brandNavDiv, toolsDiv, nav);
 
   // Desktop horizontal nav (>= 1080px)
@@ -731,6 +876,24 @@ export default async function decorate(block) {
   document.body.append(overlay);
 
   window.addEventListener('keydown', closeOnEscape);
+
+  // Locale popup — content from nav document (3rd section)
+  const localePopup = buildLocalePopup();
+  const localeData = parseLocaleData(localeDiv);
+  populateLocalePopup(localePopup, localeData);
+  document.body.append(localePopup);
+
+  // Wire all locale buttons to open popup
+  nav.querySelectorAll('.locale-btn, .utility-locale').forEach((btn) => {
+    btn.addEventListener('click', () => openLocalePopup(localePopup));
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && localePopup.getAttribute('aria-hidden') === 'false') {
+      localePopup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('locale-open');
+    }
+  });
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';

@@ -41,7 +41,7 @@
   --max-width-site: 1200px;
 
   /* nav heights */
-  --nav-height: 64px;
+  --nav-height: 60px;
   --breadcrumbs-height: 34px;
   --header-height: var(--nav-height);
 
@@ -79,7 +79,7 @@
   }
 }
 
-@media (width >= 1080px) {
+@media (width >= 1079px) {
   :root {
     --nav-height: 81px;
   }
