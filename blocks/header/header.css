@@ -1076,18 +1076,20 @@ header .desktop-header {
 }
 
 /* ==================== LOCALE POPUP ==================== */
+
+/* < 1079px: full-screen panel, body scroll locked (initial behavior) */
 .locale-popup {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background: #fff;
   z-index: 200;
   overflow-y: auto;
+  background: #fff;
   padding: 40px 35px 80px;
   box-sizing: border-box;
+  pointer-events: auto;
 }
 
 .locale-popup[aria-hidden='false'] {
@@ -1096,6 +1098,52 @@ header .desktop-header {
 
 body.locale-open {
   overflow: hidden;
+}
+
+.locale-popup-dialog {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  background: transparent;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  margin: 0;
+}
+
+/* >= 1079px: centered 740px card; page stays scrollable */
+@media (width >= 1079px) {
+  .locale-popup {
+    width: auto;
+    height: auto;
+    background: transparent;
+    overflow: visible;
+    padding: 48px 16px 24px;
+    pointer-events: none;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .locale-popup[aria-hidden='false'] {
+    display: flex;
+  }
+
+  /* Resize: user may still have .locale-open after going from narrow → wide */
+  body.locale-open {
+    overflow: hidden auto;
+  }
+
+  .locale-popup-dialog {
+    pointer-events: auto;
+    width: 740px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
+    background: #fff;
+    padding: 40px 35px 80px;
+    margin: 0 auto;
+  }
 }
 
 .locale-popup-close {

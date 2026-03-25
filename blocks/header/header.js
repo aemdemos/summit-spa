@@ -759,30 +759,39 @@ function buildLocalePopup() {
   popup.classList.add('locale-popup');
   popup.setAttribute('aria-hidden', 'true');
 
+  const dialog = document.createElement('div');
+  dialog.classList.add('locale-popup-dialog');
+  dialog.setAttribute('role', 'dialog');
+  /* Wide: non-modal (page scrolls). Narrow: full-screen modal */
+  dialog.setAttribute('aria-modal', 'true');
+
   const closeBtn = document.createElement('button');
   closeBtn.classList.add('locale-popup-close');
   closeBtn.setAttribute('aria-label', 'Close');
-  popup.append(closeBtn);
 
   const content = document.createElement('div');
   content.classList.add('locale-popup-content');
 
   const heading = document.createElement('h2');
   heading.classList.add('locale-popup-heading');
+  heading.id = 'locale-popup-heading';
+  dialog.setAttribute('aria-labelledby', 'locale-popup-heading');
   content.append(heading);
 
-  popup.append(content);
+  dialog.append(closeBtn, content);
+  popup.append(dialog);
 
   closeBtn.addEventListener('click', () => {
     popup.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('locale-open');
   });
 
+  /* Tap padded area outside inner content (narrow layout only) */
   popup.addEventListener('click', (e) => {
-    if (e.target === popup) {
-      popup.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('locale-open');
-    }
+    if (e.target !== popup) return;
+    if (window.matchMedia('(min-width: 1079px)').matches) return;
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('locale-open');
   });
 
   return popup;
@@ -834,7 +843,16 @@ function populateLocalePopup(popup, localeData) {
 
 function openLocalePopup(popup) {
   popup.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('locale-open');
+  const wide = window.matchMedia('(min-width: 1079px)').matches;
+  if (wide) {
+    /* Class rule loses to inline overflow from togglePanel(hamburger); clear so page can scroll */
+    document.body.style.overflowY = '';
+    document.body.classList.remove('locale-open');
+  } else {
+    document.body.classList.add('locale-open');
+  }
+  const dialog = popup.querySelector('.locale-popup-dialog');
+  if (dialog) dialog.setAttribute('aria-modal', wide ? 'false' : 'true');
 }
 
 /**
