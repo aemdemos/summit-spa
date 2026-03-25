@@ -717,18 +717,22 @@ function attachMegamenuBehavior(desktopHeader) {
   });
 }
 
-async function fetchLocaleData() {
-  try {
-    const resp = await fetch('/locales.json');
-    if (!resp.ok) return [];
-    const json = await resp.json();
-    return (json.data || []).map((row) => ({
-      region: row.region,
-      locales: row.locales.split(',').map((l) => l.trim()).filter(Boolean),
-    }));
-  } catch {
-    return [];
-  }
+function parseLocaleData(localeDiv) {
+  if (!localeDiv) return { heading: '', locales: [] };
+  const inner = localeDiv.querySelector(':scope > div') || localeDiv;
+  const heading = inner.querySelector('h2')?.textContent || '';
+  const locales = [];
+  const h3s = inner.querySelectorAll('h3');
+  h3s.forEach((h3) => {
+    const p = h3.nextElementSibling;
+    if (p && p.tagName === 'P') {
+      locales.push({
+        region: h3.textContent,
+        locales: p.textContent.split(',').map((l) => l.trim()).filter(Boolean),
+      });
+    }
+  });
+  return { heading, locales };
 }
 
 function buildLocalePopup() {
@@ -746,7 +750,6 @@ function buildLocalePopup() {
 
   const heading = document.createElement('h2');
   heading.classList.add('locale-popup-heading');
-  heading.textContent = 'Select location and language';
   content.append(heading);
 
   popup.append(content);
@@ -766,50 +769,51 @@ function buildLocalePopup() {
   return popup;
 }
 
-async function openLocalePopup(popup) {
+function populateLocalePopup(popup, localeData) {
   const content = popup.querySelector('.locale-popup-content');
-  // Only fetch data once
-  if (!popup.dataset.loaded) {
-    const regions = await fetchLocaleData();
-    regions.forEach((region) => {
-      const section = document.createElement('div');
-      section.classList.add('locale-region');
-
-      const regionHeading = document.createElement('div');
-      regionHeading.classList.add('locale-region-heading');
-      regionHeading.textContent = region.region;
-      section.append(regionHeading);
-
-      const grid = document.createElement('div');
-      grid.classList.add('locale-grid');
-
-      // Split locales into 3 columns (top-to-bottom flow like original)
-      const total = region.locales.length;
-      const colCount = 3;
-      const base = Math.floor(total / colCount);
-      const extra = total % colCount;
-      let offset = 0;
-      for (let c = 0; c < colCount; c += 1) {
-        const size = base + (c < extra ? 1 : 0);
-        if (size === 0) break;
-        const col = document.createElement('div');
-        col.classList.add('locale-column');
-        for (let i = 0; i < size; i += 1) {
-          const btn = document.createElement('button');
-          btn.classList.add('locale-option');
-          btn.textContent = region.locales[offset + i];
-          col.append(btn);
-        }
-        offset += size;
-        grid.append(col);
-      }
-
-      section.append(grid);
-      content.append(section);
-    });
-    popup.dataset.loaded = 'true';
+  const { heading, locales: regions } = localeData;
+  if (heading) {
+    popup.querySelector('.locale-popup-heading').textContent = heading;
   }
+  regions.forEach((region) => {
+    const section = document.createElement('div');
+    section.classList.add('locale-region');
 
+    const regionHeading = document.createElement('div');
+    regionHeading.classList.add('locale-region-heading');
+    regionHeading.textContent = region.region;
+    section.append(regionHeading);
+
+    const grid = document.createElement('div');
+    grid.classList.add('locale-grid');
+
+    // Split locales into 3 columns (top-to-bottom flow like original)
+    const total = region.locales.length;
+    const colCount = 3;
+    const base = Math.floor(total / colCount);
+    const extra = total % colCount;
+    let offset = 0;
+    for (let c = 0; c < colCount; c += 1) {
+      const size = base + (c < extra ? 1 : 0);
+      if (size === 0) break;
+      const col = document.createElement('div');
+      col.classList.add('locale-column');
+      for (let i = 0; i < size; i += 1) {
+        const btn = document.createElement('button');
+        btn.classList.add('locale-option');
+        btn.textContent = region.locales[offset + i];
+        col.append(btn);
+      }
+      offset += size;
+      grid.append(col);
+    }
+
+    section.append(grid);
+    content.append(section);
+  });
+}
+
+function openLocalePopup(popup) {
   popup.setAttribute('aria-hidden', 'false');
   document.body.classList.add('locale-open');
 }
@@ -831,6 +835,7 @@ export default async function decorate(block) {
   const topDivs = wrapper.querySelectorAll(':scope > div');
   const brandNavDiv = topDivs[0];
   const toolsDiv = topDivs[1];
+  const localeDiv = topDivs[2];
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
@@ -853,8 +858,10 @@ export default async function decorate(block) {
 
   window.addEventListener('keydown', closeOnEscape);
 
-  // Locale popup
+  // Locale popup — content from nav document (3rd section)
   const localePopup = buildLocalePopup();
+  const localeData = parseLocaleData(localeDiv);
+  populateLocalePopup(localePopup, localeData);
   document.body.append(localePopup);
 
   // Wire all locale buttons to open popup
