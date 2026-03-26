@@ -1629,26 +1629,37 @@ body.login-open {
   text-decoration: underline;
 }
 
-/* ========= Chat panel ========= */
+/* ========= Chat panel (bottom sheet: slides up / slides down to close) ========= */
 .chat-panel {
   position: fixed;
-  bottom: 0;
+  bottom: 15px;
   right: 13px;
-  width: 500px;
-  height:90%;
+  width: 100%;
+  max-width: 500px;
+  height: 90%;
+  margin: 0 auto;
   z-index: 10001;
   display: flex;
   flex-direction: column;
   background: #fff;
-  box-shadow: -4px 0 24px rgb(0 0 0 / 18%);
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
+  box-shadow: 0 -4px 24px rgb(0 0 0 / 18%);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   max-height: 640px;
   border-radius: 16px;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.chat-panel[aria-hidden="false"] {
-  transform: translateX(0);
+.chat-panel[aria-hidden='false'] {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel {
+    transition-duration: 0.01ms;
+  }
 }
 
 /* Header */
@@ -1780,6 +1791,8 @@ body.login-open {
   display: flex;
   align-items: center;
   justify-content: center;
+  position:relative;
+  right:55px;
 }
 
 .chat-send-btn svg {
@@ -1821,7 +1834,6 @@ body.login-open {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  text-decoration: underline;
 }
 
 .chat-start-over svg {
@@ -1844,9 +1856,9 @@ body.chat-open {
   overflow: hidden;
 }
 
-/* Responsive: smaller screens get full-width panel */
+/* Responsive: full-bleed width on narrow viewports */
 @media (width < 600px) {
   .chat-panel {
-    width: 100%;
+    max-width: none;
   }
 }
