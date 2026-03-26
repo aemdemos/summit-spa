@@ -1176,6 +1176,63 @@ function parseChatData(chatDiv) {
   };
 }
 
+// eslint-disable-next-line browser-security/detect-mixed-content, browser-security/no-http-urls -- SVG namespace URI
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  return el;
+}
+
+function createCloseSvg() {
+  const svg = svgEl('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none' });
+  const p1 = svgEl('path', { d: 'M15 5L5 15', stroke: '#333', 'stroke-width': '1.5', 'stroke-linecap': 'round' });
+  const p2 = svgEl('path', { d: 'M5 5L15 15', stroke: '#333', 'stroke-width': '1.5', 'stroke-linecap': 'round' });
+  svg.append(p1, p2);
+  return svg;
+}
+
+function createSendSvg() {
+  const svg = svgEl('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'none' });
+  const g = svgEl('g', { 'clip-path': 'url(#sendClip)' });
+  const arrowD = [
+    'M4.698 4.033L21 12l-16.302 7.966',
+    'a.543.543 0 0 1-.292-.124.55.55 0 0 1-.153-.267',
+    '.56.56 0 0 1 .02-.325L6.5 12 4.032 4.726',
+    'a.56.56 0 0 1 .02-.3.55.55 0 0 1 .153-.268',
+    '.543.543 0 0 1 .493-.124Z',
+  ].join('');
+  const p1 = svgEl('path', {
+    d: arrowD, stroke: '#999', 'stroke-width': '1.333', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+  const p2 = svgEl('path', {
+    d: 'M6.5 12H21', stroke: '#999', 'stroke-width': '1.333', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+  g.append(p1, p2);
+  const defs = svgEl('defs');
+  const clip = svgEl('clipPath', { id: 'sendClip' });
+  clip.append(svgEl('rect', { width: '24', height: '24', fill: 'white' }));
+  defs.append(clip);
+  svg.append(g, defs);
+  return svg;
+}
+
+function createRefreshSvg() {
+  const svg = svgEl('svg', { width: '12', height: '12', viewBox: '0 0 12 12', fill: 'none' });
+  const pathD = [
+    'M7.642 7.991a4 4 0 0 1-2.646.989',
+    ' 4 4 0 0 1-2.64-1.005A4 4 0 0 1 1.04 5.476',
+    ' 4 4 0 0 1 1.7 2.73a4 4 0 0 1 2.312-1.624',
+    ' 4 4 0 0 1 2.808.308 4 4 0 0 1 1.905 2.086',
+    'M8.975 1v2.5h-2.5',
+  ].join('');
+  svg.append(svgEl('path', {
+    d: pathD, stroke: '#0254EC', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  }));
+  return svg;
+}
+
 function buildChatPanel(chatData) {
   const panel = document.createElement('div');
   panel.classList.add('chat-panel');
@@ -1188,8 +1245,12 @@ function buildChatPanel(chatData) {
   const headerLeft = document.createElement('div');
   headerLeft.classList.add('chat-panel-header-left');
 
-  const chatIcon = document.createElement('span');
+  const chatIcon = document.createElement('img');
   chatIcon.classList.add('chat-panel-icon');
+  chatIcon.src = '/icons/kris-ai-icon.svg';
+  chatIcon.alt = 'Kris AI';
+  chatIcon.width = 39;
+  chatIcon.height = 32;
   headerLeft.append(chatIcon);
 
   const titleEl = document.createElement('span');
@@ -1200,6 +1261,7 @@ function buildChatPanel(chatData) {
   const closeBtn = document.createElement('button');
   closeBtn.classList.add('chat-panel-close');
   closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.append(createCloseSvg());
 
   header.append(headerLeft, closeBtn);
   panel.append(header);
@@ -1246,6 +1308,7 @@ function buildChatPanel(chatData) {
   const sendBtn = document.createElement('button');
   sendBtn.classList.add('chat-send-btn');
   sendBtn.setAttribute('aria-label', 'Send');
+  sendBtn.append(createSendSvg());
   inputArea.append(sendBtn);
 
   panel.append(inputArea);
@@ -1264,7 +1327,10 @@ function buildChatPanel(chatData) {
 
   const startOver = document.createElement('button');
   startOver.classList.add('chat-start-over');
-  startOver.textContent = chatData.startOverLabel || 'Start over';
+  const startOverText = document.createElement('span');
+  startOverText.textContent = chatData.startOverLabel || 'Start over';
+  startOver.append(startOverText);
+  startOver.append(createRefreshSvg());
   footerLinks.append(startOver);
 
   if (chatData.tcsLink) {
