@@ -1148,6 +1148,162 @@ function openLocalePopup(popup) {
   if (dialog) dialog.setAttribute('aria-modal', wide ? 'false' : 'true');
 }
 
+/* ---- Chat panel (5th nav section) ---- */
+
+function parseChatData(chatDiv) {
+  if (!chatDiv) return null;
+  const inner = chatDiv.querySelector(':scope > div') || chatDiv;
+  const h2 = inner.querySelector('h2');
+  const title = h2 ? h2.textContent.trim() : 'Chat with Kris';
+
+  const paragraphs = [...inner.querySelectorAll('p')];
+  const welcomeMsg = textAt(paragraphs, 0);
+  const examples = [...inner.querySelectorAll('ul > li')]
+    .map((li) => li.textContent.trim());
+  const placeholder = textAt(paragraphs, 1);
+  const disclaimer = textAt(paragraphs, 2);
+  const startOverLabel = textAt(paragraphs, 3);
+  const tcsLink = linkAt(paragraphs, 4);
+
+  return {
+    title,
+    welcomeMsg,
+    examples,
+    placeholder,
+    disclaimer,
+    startOverLabel,
+    tcsLink,
+  };
+}
+
+function buildChatPanel(chatData) {
+  const panel = document.createElement('div');
+  panel.classList.add('chat-panel');
+  panel.setAttribute('aria-hidden', 'true');
+
+  // Header bar
+  const header = document.createElement('div');
+  header.classList.add('chat-panel-header');
+
+  const headerLeft = document.createElement('div');
+  headerLeft.classList.add('chat-panel-header-left');
+
+  const chatIcon = document.createElement('span');
+  chatIcon.classList.add('chat-panel-icon');
+  headerLeft.append(chatIcon);
+
+  const titleEl = document.createElement('span');
+  titleEl.classList.add('chat-panel-title');
+  titleEl.textContent = chatData.title;
+  headerLeft.append(titleEl);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('chat-panel-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+
+  header.append(headerLeft, closeBtn);
+  panel.append(header);
+
+  // Messages area
+  const messages = document.createElement('div');
+  messages.classList.add('chat-panel-messages');
+
+  // Welcome bubble
+  const bubble1 = document.createElement('div');
+  bubble1.classList.add('chat-bubble');
+  bubble1.textContent = chatData.welcomeMsg;
+  messages.append(bubble1);
+
+  // Examples bubble
+  if (chatData.examples.length > 0) {
+    const bubble2 = document.createElement('div');
+    bubble2.classList.add('chat-bubble');
+    const intro = document.createElement('p');
+    intro.textContent = 'Just start a chat by typing in your questions, such as:';
+    bubble2.append(intro);
+    const ul = document.createElement('ul');
+    chatData.examples.forEach((ex) => {
+      const li = document.createElement('li');
+      li.textContent = ex;
+      ul.append(li);
+    });
+    bubble2.append(ul);
+    messages.append(bubble2);
+  }
+
+  panel.append(messages);
+
+  // Input area
+  const inputArea = document.createElement('div');
+  inputArea.classList.add('chat-panel-input');
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.classList.add('chat-input');
+  input.setAttribute('placeholder', chatData.placeholder || 'Ask a question...');
+  inputArea.append(input);
+
+  const sendBtn = document.createElement('button');
+  sendBtn.classList.add('chat-send-btn');
+  sendBtn.setAttribute('aria-label', 'Send');
+  inputArea.append(sendBtn);
+
+  panel.append(inputArea);
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.classList.add('chat-panel-footer');
+
+  const disc = document.createElement('span');
+  disc.classList.add('chat-disclaimer');
+  disc.textContent = chatData.disclaimer;
+  footer.append(disc);
+
+  const footerLinks = document.createElement('div');
+  footerLinks.classList.add('chat-footer-links');
+
+  const startOver = document.createElement('button');
+  startOver.classList.add('chat-start-over');
+  startOver.textContent = chatData.startOverLabel || 'Start over';
+  footerLinks.append(startOver);
+
+  if (chatData.tcsLink) {
+    const sep = document.createElement('span');
+    sep.classList.add('chat-footer-sep');
+    sep.textContent = '|';
+    footerLinks.append(sep);
+    const tcs = document.createElement('a');
+    tcs.classList.add('chat-tcs-link');
+    tcs.href = chatData.tcsLink.href;
+    tcs.textContent = chatData.tcsLink.text;
+    footerLinks.append(tcs);
+  }
+
+  footer.append(footerLinks);
+  panel.append(footer);
+
+  // Close handlers
+  function closePanel() {
+    panel.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('chat-open');
+  }
+
+  closeBtn.addEventListener('click', closePanel);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && panel.getAttribute('aria-hidden') === 'false') {
+      closePanel();
+    }
+  });
+
+  return panel;
+}
+
+function openChatPanel(panel) {
+  panel.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('chat-open');
+}
+
 /**
  * loads and decorates the header
  * @param {Element} block The header block element
@@ -1167,6 +1323,7 @@ export default async function decorate(block) {
   const toolsDiv = topDivs[1];
   const localeDiv = topDivs[2] || null;
   const loginDiv = topDivs[3] || null;
+  const chatDiv = topDivs[4] || null;
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
@@ -1216,6 +1373,18 @@ export default async function decorate(block) {
     // Wire desktop login button
     nav.querySelectorAll('.desktop-login').forEach((btn) => {
       btn.addEventListener('click', () => openLoginPopup(loginPopup));
+    });
+  }
+
+  // Chat panel — content from nav document (5th section)
+  const chatData = parseChatData(chatDiv);
+  if (chatData) {
+    const chatPanel = buildChatPanel(chatData);
+    document.body.append(chatPanel);
+
+    // Wire all chat buttons (mobile + desktop utility bar)
+    nav.querySelectorAll('.utility-chat').forEach((btn) => {
+      btn.addEventListener('click', () => openChatPanel(chatPanel));
     });
   }
 
