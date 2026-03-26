@@ -1568,7 +1568,7 @@ body.login-open {
 
 .login-reset-link {
   font-size: 13px;
-  color: #0066cc;
+  color: #06c;
   text-decoration: none;
   font-family: var(--body-font-family);
 }
@@ -1608,7 +1608,7 @@ body.login-open {
 
 .login-bottom-link {
   font-size: 13px;
-  color: #0066cc;
+  color: #06c;
   text-decoration: none;
   font-family: var(--body-font-family);
 }
@@ -1620,7 +1620,7 @@ body.login-open {
 }
 
 .login-bottom-link a {
-  color: #0066cc;
+  color: #06c;
   text-decoration: none;
 }
 

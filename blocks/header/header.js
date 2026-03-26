@@ -965,18 +965,10 @@ function parseLoginFragment(wrapper) {
   };
 }
 
-async function fetchLoginData() {
-  try {
-    const resp = await fetch('/login.plain.html');
-    if (!resp.ok) return null;
-    const html = await resp.text();
-    const frag = document.createRange().createContextualFragment(html);
-    const wrapper = document.createElement('div');
-    wrapper.append(frag);
-    return parseLoginFragment(wrapper);
-  } catch {
-    return null;
-  }
+function parseLoginData(loginDiv) {
+  if (!loginDiv) return null;
+  const inner = loginDiv.querySelector(':scope > div') || loginDiv;
+  return parseLoginFragment(inner);
 }
 
 function buildLoginPopup(loginData) {
@@ -1174,6 +1166,7 @@ export default async function decorate(block) {
   const brandNavDiv = topDivs[0];
   const toolsDiv = topDivs[1];
   const localeDiv = topDivs[2] || null;
+  const loginDiv = topDivs[3] || null;
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
@@ -1214,8 +1207,8 @@ export default async function decorate(block) {
     }
   });
 
-  // Login popup — content from separate login DA document
-  const loginData = await fetchLoginData();
+  // Login popup — content from nav document (4th section)
+  const loginData = parseLoginData(loginDiv);
   if (loginData) {
     const loginPopup = buildLoginPopup(loginData);
     document.body.append(loginPopup);
