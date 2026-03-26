@@ -28,22 +28,22 @@
 }
 
 /* Content overlay - positioned at the bottom-left */
-.hero-app-cta > div:last-child {
+.hero-app-cta-content {
   position: absolute;
   bottom: 16px;
   left: 24px;
   max-width: 380px;
   padding-right: 10px;
-    padding-left: 10px;
+  padding-left: 10px;
 }
 
 /* Title */
-.hero-app-cta h1,
-.hero-app-cta h2,
-.hero-app-cta h3,
-.hero-app-cta h4,
-.hero-app-cta h5,
-.hero-app-cta h6 {
+.hero-app-cta-content h1,
+.hero-app-cta-content h2,
+.hero-app-cta-content h3,
+.hero-app-cta-content h4,
+.hero-app-cta-content h5,
+.hero-app-cta-content h6 {
   font-family: sigvar, Georgia, Arial, Helvetica, sans-serif;
   font-size: 26px;
   font-weight: 400;
@@ -54,7 +54,7 @@
 }
 
 /* Description */
-.hero-app-cta p {
+.hero-app-cta-content p {
   font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: 200;
@@ -64,14 +64,14 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Reset margin on the CTA paragraph wrapper */
-.hero-app-cta > div:last-child > div:last-child p {
+/* CTA paragraph — reset margin */
+.hero-app-cta-content p:last-child {
   margin: 0;
 }
 
 /* CTA button */
-.hero-app-cta a,
-.hero-app-cta a.button {
+.hero-app-cta-content a,
+.hero-app-cta-content a.button {
   display: block;
   width: 220px;
   height: 35px;
@@ -91,8 +91,8 @@
   margin: 0;
 }
 
-.hero-app-cta a:hover,
-.hero-app-cta a.button:hover {
+.hero-app-cta-content a:hover,
+.hero-app-cta-content a.button:hover {
   background-color: rgb(255 255 255 / 15%);
   color: #fff;
   text-decoration: none;
@@ -121,15 +121,15 @@
 
 /* Tablet+ */
 @media (width >= 600px) {
-  .hero-app-cta > div:last-child {
+  .hero-app-cta-content {
     left: 32px;
   }
 }
 
 /* Desktop+ */
 @media (width >= 900px) {
-  .hero-app-cta > div:last-child {
-  padding-left:40px;
+  .hero-app-cta-content {
+    padding-left: 40px;
     position: absolute;
     top: 45%;
     transform: translateY(-50%);
@@ -138,14 +138,14 @@
 
 /* Wide - align with centered content (max-width 1200px + 32px padding) */
 @media (width >= 1200px) {
-  .hero-app-cta > div:last-child {
+  .hero-app-cta-content {
     left: calc(50% - var(--max-width-site) / 2 + 32px);
     padding-left: 40px;
   }
 }
 
 @media (width >= 1250px) {
-  .hero-app-cta > div:last-child {
-  padding-left:0;
-}
+  .hero-app-cta-content {
+    padding-left: 0;
+  }
 }
