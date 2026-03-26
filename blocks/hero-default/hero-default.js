@@ -1,5 +1,6 @@
 /**
- * Hero App CTA: row 1 = media, row 2 = single column (title, text, CTA).
+ * Hero (default): row 1 = media, row 2 = single column (title, text, CTA).
+ * All content is in one column — no multi-column splitting.
  * @param {Element} block
  */
 export default function decorate(block) {
@@ -10,6 +11,6 @@ export default function decorate(block) {
 
   const contentRow = block.querySelector(':scope > div:nth-child(2)');
   if (contentRow) {
-    contentRow.classList.add('hero-app-cta-content');
+    contentRow.classList.add('hero-default-content');
   }
 }

@@ -1,0 +1,180 @@
+@import url('./hero-tokens.css');
+
+/* Full-bleed section wrapper */
+main .hero-default-container .hero-default-wrapper {
+  max-width: unset;
+  padding: 0;
+  height: 480px;
+}
+
+/* Hero block */
+main .hero-default {
+  position: relative;
+  height: var(--hero-height);
+  padding: 0;
+  overflow: hidden;
+  background: var(--hero-bg-gradient);
+}
+
+/* Row 1 — image fills entire hero as background */
+main .hero-default > div:first-child {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+main .hero-default > div:first-child > div {
+  height: 100%;
+}
+
+main .hero-default > div:first-child p {
+  margin: 0;
+  height: 100%;
+}
+
+main .hero-default picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+main .hero-default img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 65% center;
+}
+
+/* Row 2 — single column: title + text + button */
+main .hero-default-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0;
+  box-sizing: border-box;
+  transform: translateY(10px);
+  width: 550px;
+  height: 256px;
+  max-width: calc(100% - 34px);
+}
+
+/* Heading */
+main .hero-default-content h1 {
+  font-family: sigvar, sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  line-height: 24px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Description */
+main .hero-default-content p {
+  font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  line-height: normal;
+  margin: 9px 0 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CTA link */
+main .hero-default-content a,
+main .hero-default-content a.button {
+  display: inline-block;
+  font-family: proxima-nova, "Open Sans", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 20px 0 30px;
+  line-height: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+main .hero-default-content a:hover,
+main .hero-default-content a.button:hover {
+  text-decoration: underline;
+  color: #fff;
+  background: none;
+}
+
+/* CTA paragraph — reset margin */
+main .hero-default-content p:last-child {
+  margin: 0;
+}
+
+/* ===== Tablet (768+) ===== */
+
+@media (width >= 768px) {
+  main .hero-default img {
+    object-position: 50% 0;
+  }
+
+  main .hero-default-content {
+    justify-content: center;
+    margin: 0 auto;
+    transform: translateY(50px);
+    width: 400px;
+    height: 256px;
+    display: flex;
+    right: 70px;
+  }
+
+  main .hero-default-content h1 {
+    font-size: 31px;
+    line-height: 36px;
+    font-family: sigvar, sans-serif, proxima-nova, "Open Sans";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main .hero-default-content p {
+    font-size: 1.1rem;
+    margin: 9px 0 0;
+  }
+
+  main .hero-default-content a,
+  main .hero-default-content a.button {
+    font-size: 12px;
+    margin: 20px 0 16px;
+    border-radius: 3px;
+    border: 1px solid #fff;
+    padding: 5px 30px;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 1.5px;
+  }
+}
+
+/* ===== Desktop (992+) ===== */
+
+@media (width > 991px) {
+  main .hero-default-container .hero-default-wrapper {
+    height: 650px;
+  }
+
+  main .hero-default-content {
+    margin: 0 auto;
+    right: 0;
+    width: 57.5rem;
+  }
+}
+
+/* ===== Wide desktop (1200+) ===== */
+
+@media (width > 1199px) {
+  main .hero-default-content {
+    width: 67.5rem;
+  }
+}

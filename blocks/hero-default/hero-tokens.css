@@ -1,0 +1,20 @@
+/* hero design tokens */
+:root {
+    --hero-height: 340px;
+    --hero-bg-gradient: linear-gradient(105deg, rgb(8 40 99) 0%, rgb(39 115 139) 100%);
+    --hero-text-left: 17px;
+  }
+  
+  @media (width >= 768px) {
+    :root {
+      --hero-height: 480px;
+      --hero-text-left: 35px;
+    }
+  }
+  
+  @media (width >= 992px) {
+    :root {
+      --hero-text-left: 0px;
+    }
+  }
+  
