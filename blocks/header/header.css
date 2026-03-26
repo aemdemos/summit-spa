@@ -1073,6 +1073,116 @@ header .desktop-header {
   header .megamenu-links a.megamenu-more:hover::after {
     border-color: #f99f1c;
   }
+
+  /* --- Search Panel --- */
+  header .search-panel {
+    display: none;
+    background: #fff;
+    width: 100%;
+    z-index: 55;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+  }
+
+  header .search-panel[aria-hidden='false'] {
+    display: block;
+  }
+
+  header .search-panel-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 30px 20px 20px;
+  }
+
+  header .search-panel-heading {
+    font-size: 22px;
+    font-weight: 400;
+    color: #00266b;
+    margin: 0 0 20px;
+    font-family: var(--body-font-family);
+  }
+
+  header .search-panel-heading .search-highlight {
+    color: #f99f1c;
+  }
+
+  header .search-panel-row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  header .search-panel-input {
+    flex: 1;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    padding: 0 16px;
+    font-size: 14px;
+    font-family: var(--body-font-family);
+    color: #333;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  header .search-panel-input:focus {
+    border-color: #00266b;
+  }
+
+  header .search-panel-input::placeholder {
+    color: #999;
+  }
+
+  header .search-panel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 50px;
+    padding: 0 32px;
+    background: #00266b;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: var(--body-font-family);
+    white-space: nowrap;
+  }
+
+  header .search-panel-btn:hover {
+    background: #003087;
+  }
+
+  header .search-panel-sparkle {
+    font-size: 16px;
+  }
+
+  header .search-panel-close-row {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 12px;
+    background: #fff;
+  }
+
+  header .search-panel-close {
+    font-size: 11px;
+    font-weight: 600;
+    color: #00266b;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 24px;
+    font-family: var(--body-font-family);
+  }
+
+  header .search-panel-close:hover {
+    color: #f99f1c;
+  }
 }
 
 /* ==================== LOCALE POPUP ==================== */

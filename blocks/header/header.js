@@ -617,6 +617,60 @@ function buildDesktopNavLinks(brandNavDiv) {
   return navLinks;
 }
 
+function buildSearchPanel() {
+  const panel = document.createElement('div');
+  panel.classList.add('search-panel');
+  panel.setAttribute('aria-hidden', 'true');
+
+  const inner = document.createElement('div');
+  inner.classList.add('search-panel-inner');
+
+  // Heading: "Find answers with the help of AI"
+  const heading = document.createElement('h2');
+  heading.classList.add('search-panel-heading');
+  heading.innerHTML = 'Find answers with the <span class="search-highlight">help of AI</span>';
+
+  // Search row: input + button
+  const searchRow = document.createElement('div');
+  searchRow.classList.add('search-panel-row');
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.classList.add('search-panel-input');
+  input.setAttribute('placeholder', 'Ask a question');
+
+  const searchBtn = document.createElement('button');
+  searchBtn.classList.add('search-panel-btn');
+  searchBtn.innerHTML = '<span class="search-panel-sparkle">&#10024;</span> SEARCH';
+
+  searchRow.append(input, searchBtn);
+  inner.append(heading, searchRow);
+  panel.append(inner);
+
+  // Close button at bottom
+  const closeRow = document.createElement('div');
+  closeRow.classList.add('search-panel-close-row');
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('search-panel-close');
+  closeBtn.textContent = 'CLOSE';
+  closeBtn.addEventListener('click', () => {
+    panel.setAttribute('aria-hidden', 'true');
+  });
+  closeRow.append(closeBtn);
+  panel.append(closeRow);
+
+  return panel;
+}
+
+function toggleSearchPanel(panel, searchBtn) {
+  const isOpen = panel.getAttribute('aria-hidden') === 'false';
+  panel.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+  if (!isOpen) {
+    const input = panel.querySelector('.search-panel-input');
+    if (input) input.focus();
+  }
+}
+
 function buildDesktopRight(toolsDiv) {
   const right = document.createElement('div');
   right.classList.add('desktop-right');
@@ -683,6 +737,26 @@ function buildDesktopHeader(brandNavDiv, toolsDiv) {
 
   mainRow.append(mainInner);
   desktop.append(mainRow);
+
+  // Search panel — appended after main row, toggled by search icon
+  const tools = findToolElements(toolsDiv);
+  if (tools.hasSearch) {
+    const searchPanel = buildSearchPanel();
+    desktop.append(searchPanel);
+
+    const searchBtn = desktop.querySelector('.desktop-search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => toggleSearchPanel(searchPanel, searchBtn));
+    }
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' && searchPanel.getAttribute('aria-hidden') === 'false') {
+        searchPanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
   return desktop;
 }
 
