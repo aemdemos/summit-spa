@@ -919,11 +919,61 @@ function populateLocalePopup(popup, localeData) {
   });
 }
 
+function textAt(paragraphs, i) {
+  return i < paragraphs.length ? paragraphs[i].textContent.trim() : '';
+}
+
+function linkAt(paragraphs, i) {
+  if (i >= paragraphs.length) return null;
+  const a = paragraphs[i].querySelector('a');
+  return a ? { text: a.textContent.trim(), href: a.href } : null;
+}
+
+function parseLoginFragment(wrapper) {
+  const h2 = wrapper.querySelector('h2');
+  const heading = h2 ? h2.textContent.trim() : 'Log in';
+
+  // Radio options come from the <ul> list
+  const radioOptions = [...wrapper.querySelectorAll('ul > li')]
+    .map((li) => li.textContent.trim());
+
+  // Ordered <p> fields: userLabel, passLabel, rememberLabel, resetLink,
+  // submitLabel, forgotMemberLink, signupText, signupLink
+  const paragraphs = [...wrapper.querySelectorAll('p')];
+  let idx = 0;
+  const userLabel = textAt(paragraphs, idx); idx += 1;
+  // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- label text, not a credential
+  const passLabel = textAt(paragraphs, idx); idx += 1;
+  const rememberLabel = textAt(paragraphs, idx); idx += 1;
+  const resetLink = linkAt(paragraphs, idx); idx += 1;
+  const submitLabel = textAt(paragraphs, idx); idx += 1;
+  const forgotMemberLink = linkAt(paragraphs, idx); idx += 1;
+  const signupText = textAt(paragraphs, idx); idx += 1;
+  const signupLink = linkAt(paragraphs, idx);
+
+  return {
+    heading,
+    radioOptions,
+    userLabel,
+    passLabel,
+    rememberLabel,
+    resetLink,
+    submitLabel,
+    forgotMemberLink,
+    signupText,
+    signupLink,
+  };
+}
+
 async function fetchLoginData() {
   try {
-    const resp = await fetch('/login.json');
+    const resp = await fetch('/login.plain.html');
     if (!resp.ok) return null;
-    return resp.json();
+    const html = await resp.text();
+    const frag = document.createRange().createContextualFragment(html);
+    const wrapper = document.createElement('div');
+    wrapper.append(frag);
+    return parseLoginFragment(wrapper);
   } catch {
     return null;
   }
@@ -998,10 +1048,10 @@ function buildLoginPopup(loginData) {
   userField.append(userInput, userLabelEl);
   form.append(userField);
 
-  // Password field
   const passField = document.createElement('div');
   passField.classList.add('login-field');
   const passInput = document.createElement('input');
+  // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- HTML input type attribute, not a credential
   passInput.type = 'password';
   passInput.classList.add('login-input');
   passInput.setAttribute('placeholder', ' ');
@@ -1164,7 +1214,7 @@ export default async function decorate(block) {
     }
   });
 
-  // Login popup — content from separate login.json
+  // Login popup — content from separate login DA document
   const loginData = await fetchLoginData();
   if (loginData) {
     const loginPopup = buildLoginPopup(loginData);
