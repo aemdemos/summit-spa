@@ -1245,12 +1245,8 @@ function buildChatPanel(chatData) {
   const headerLeft = document.createElement('div');
   headerLeft.classList.add('chat-panel-header-left');
 
-  const chatIcon = document.createElement('img');
+  const chatIcon = document.createElement('span');
   chatIcon.classList.add('chat-panel-icon');
-  chatIcon.src = '/icons/kris-ai-icon.svg';
-  chatIcon.alt = 'Kris AI';
-  chatIcon.width = 39;
-  chatIcon.height = 32;
   headerLeft.append(chatIcon);
 
   const titleEl = document.createElement('span');
