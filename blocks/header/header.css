@@ -1362,3 +1362,269 @@ body.locale-open {
     font-size: 22px;
   }
 }
+
+/* ==================== LOGIN POPUP ==================== */
+
+.login-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.login-popup[aria-hidden='false'] {
+  display: flex;
+}
+
+body.login-open {
+  overflow: hidden;
+}
+
+.login-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+}
+
+.login-popup-dialog {
+  position: relative;
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  background: #fff;
+  margin-top: 90px;
+  padding: 36px 40px 40px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Close button — circular grey */
+.login-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-popup-close::before,
+.login-popup-close::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 1.5px;
+  background: #666;
+}
+
+.login-popup-close::before {
+  transform: rotate(45deg);
+}
+
+.login-popup-close::after {
+  transform: rotate(-45deg);
+}
+
+.login-popup-close:hover {
+  background: #ccc;
+}
+
+/* Heading — italic serif */
+.login-popup-heading {
+  font-family: "Crimson Text", Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  font-style: italic;
+  color: #333;
+  margin: 0 0 20px;
+  line-height: 1.2;
+}
+
+/* Radio group */
+.login-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.login-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #333;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+}
+
+.login-radio {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  margin: 0;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.login-radio:checked {
+  border-color: #f99f1c;
+}
+
+.login-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: #f99f1c;
+  border-radius: 50%;
+}
+
+/* Floating label fields */
+.login-field {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.login-input {
+  width: 100%;
+  height: 54px;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  padding: 20px 16px 6px;
+  font-size: 14px;
+  font-family: var(--body-font-family);
+  color: #333;
+  box-sizing: border-box;
+  outline: none;
+  background: #fff;
+}
+
+.login-input:focus {
+  border-color: #f99f1c;
+  border-width: 2px;
+}
+
+.login-label {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  font-family: var(--body-font-family);
+}
+
+.login-input:focus + .login-label,
+.login-input:not(:placeholder-shown) + .login-label {
+  top: 12px;
+  transform: translateY(0);
+  font-size: 11px;
+  color: #666;
+}
+
+/* Options row */
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+}
+
+.login-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.login-reset-link {
+  font-size: 13px;
+  color: #0066cc;
+  text-decoration: none;
+  font-family: var(--body-font-family);
+}
+
+.login-reset-link:hover {
+  text-decoration: underline;
+}
+
+/* Submit button — dark navy */
+.login-submit {
+  display: block;
+  width: 100%;
+  height: 48px;
+  background: #00266b;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+  margin-bottom: 20px;
+}
+
+.login-submit:hover {
+  background: #003087;
+}
+
+/* Bottom links with chevron */
+.login-bottom-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-bottom-link {
+  font-size: 13px;
+  color: #0066cc;
+  text-decoration: none;
+  font-family: var(--body-font-family);
+}
+
+.login-bottom-link::before {
+  content: '\203A';
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+.login-bottom-link a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.login-bottom-link:hover,
+.login-bottom-link a:hover {
+  text-decoration: underline;
+}

@@ -919,6 +919,179 @@ function populateLocalePopup(popup, localeData) {
   });
 }
 
+async function fetchLoginData() {
+  try {
+    const resp = await fetch('/login.json');
+    if (!resp.ok) return null;
+    return resp.json();
+  } catch {
+    return null;
+  }
+}
+
+function buildLoginPopup(loginData) {
+  const popup = document.createElement('div');
+  popup.classList.add('login-popup');
+  popup.setAttribute('aria-hidden', 'true');
+
+  // Overlay
+  const overlay = document.createElement('div');
+  overlay.classList.add('login-popup-overlay');
+  popup.append(overlay);
+
+  const dialog = document.createElement('div');
+  dialog.classList.add('login-popup-dialog');
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-labelledby', 'login-popup-heading');
+
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('login-popup-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+  dialog.append(closeBtn);
+
+  // Heading
+  const heading = document.createElement('h2');
+  heading.classList.add('login-popup-heading');
+  heading.id = 'login-popup-heading';
+  heading.textContent = loginData.heading;
+  dialog.append(heading);
+
+  // Radio group
+  if (loginData.radioOptions.length > 0) {
+    const radioGroup = document.createElement('div');
+    radioGroup.classList.add('login-radio-group');
+    radioGroup.setAttribute('role', 'radiogroup');
+    loginData.radioOptions.forEach((option, i) => {
+      const label = document.createElement('label');
+      label.classList.add('login-radio-label');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'login-type';
+      radio.classList.add('login-radio');
+      if (i === 0) radio.checked = true;
+      const span = document.createElement('span');
+      span.textContent = option;
+      label.append(radio, span);
+      radioGroup.append(label);
+    });
+    dialog.append(radioGroup);
+  }
+
+  // Form fields
+  const form = document.createElement('div');
+  form.classList.add('login-form');
+
+  // Username field
+  const userField = document.createElement('div');
+  userField.classList.add('login-field');
+  const userInput = document.createElement('input');
+  userInput.type = 'text';
+  userInput.classList.add('login-input');
+  userInput.setAttribute('placeholder', ' ');
+  userInput.id = 'login-user';
+  const userLabelEl = document.createElement('label');
+  userLabelEl.classList.add('login-label');
+  userLabelEl.setAttribute('for', 'login-user');
+  userLabelEl.textContent = loginData.userLabel;
+  userField.append(userInput, userLabelEl);
+  form.append(userField);
+
+  // Password field
+  const passField = document.createElement('div');
+  passField.classList.add('login-field');
+  const passInput = document.createElement('input');
+  passInput.type = 'password';
+  passInput.classList.add('login-input');
+  passInput.setAttribute('placeholder', ' ');
+  passInput.id = 'login-pass';
+  const passLabelEl = document.createElement('label');
+  passLabelEl.classList.add('login-label');
+  passLabelEl.setAttribute('for', 'login-pass');
+  passLabelEl.textContent = loginData.passLabel;
+  passField.append(passInput, passLabelEl);
+  form.append(passField);
+
+  // Options row: Remember me + Reset Password
+  const optionsRow = document.createElement('div');
+  optionsRow.classList.add('login-options');
+  const rememberWrap = document.createElement('label');
+  rememberWrap.classList.add('login-remember');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.classList.add('login-checkbox');
+  const rememberText = document.createElement('span');
+  rememberText.textContent = loginData.rememberLabel;
+  rememberWrap.append(checkbox, rememberText);
+  optionsRow.append(rememberWrap);
+
+  if (loginData.resetLink) {
+    const reset = document.createElement('a');
+    reset.href = loginData.resetLink.href;
+    reset.textContent = loginData.resetLink.text;
+    reset.classList.add('login-reset-link');
+    optionsRow.append(reset);
+  }
+  form.append(optionsRow);
+
+  // Submit button
+  const submitBtn = document.createElement('button');
+  submitBtn.classList.add('login-submit');
+  submitBtn.textContent = loginData.submitLabel;
+  form.append(submitBtn);
+
+  // Bottom links
+  const bottomLinks = document.createElement('div');
+  bottomLinks.classList.add('login-bottom-links');
+
+  if (loginData.forgotMemberLink) {
+    const link = document.createElement('a');
+    link.href = loginData.forgotMemberLink.href;
+    link.textContent = loginData.forgotMemberLink.text;
+    link.classList.add('login-bottom-link');
+    bottomLinks.append(link);
+  }
+
+  if (loginData.signupLink) {
+    const wrap = document.createElement('div');
+    wrap.classList.add('login-bottom-link');
+    const textBefore = loginData.signupText || '';
+    if (textBefore) wrap.append(document.createTextNode(textBefore));
+    const signupA = document.createElement('a');
+    signupA.href = loginData.signupLink.href;
+    signupA.textContent = loginData.signupLink.text;
+    wrap.append(signupA);
+    bottomLinks.append(wrap);
+  }
+
+  form.append(bottomLinks);
+  dialog.append(form);
+  popup.append(dialog);
+
+  // Close handlers
+  function closePopup() {
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('login-open');
+  }
+
+  closeBtn.addEventListener('click', closePopup);
+  overlay.addEventListener('click', closePopup);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && popup.getAttribute('aria-hidden') === 'false') {
+      closePopup();
+    }
+  });
+
+  return popup;
+}
+
+function openLoginPopup(popup) {
+  popup.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('login-open');
+}
+
 function openLocalePopup(popup) {
   popup.setAttribute('aria-hidden', 'false');
   const wide = window.matchMedia('(min-width: 1079px)').matches;
@@ -950,7 +1123,7 @@ export default async function decorate(block) {
   const topDivs = wrapper.querySelectorAll(':scope > div');
   const brandNavDiv = topDivs[0];
   const toolsDiv = topDivs[1];
-  const localeDiv = topDivs[2];
+  const localeDiv = topDivs[2] || null;
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
@@ -990,6 +1163,18 @@ export default async function decorate(block) {
       document.body.classList.remove('locale-open');
     }
   });
+
+  // Login popup — content from separate login.json
+  const loginData = await fetchLoginData();
+  if (loginData) {
+    const loginPopup = buildLoginPopup(loginData);
+    document.body.append(loginPopup);
+
+    // Wire desktop login button
+    nav.querySelectorAll('.desktop-login').forEach((btn) => {
+      btn.addEventListener('click', () => openLoginPopup(loginPopup));
+    });
+  }
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
