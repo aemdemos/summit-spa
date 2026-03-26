@@ -628,7 +628,7 @@ function buildSearchPanel() {
   // Heading: "Find answers with the help of AI"
   const heading = document.createElement('h2');
   heading.classList.add('search-panel-heading');
-  heading.innerHTML = 'Find answers with the <span class="search-highlight">help of AI</span>';
+  heading.textContent = 'Find answers with the help of AI';
 
   // Search row: input + button
   const searchRow = document.createElement('div');
@@ -641,7 +641,10 @@ function buildSearchPanel() {
 
   const searchBtn = document.createElement('button');
   searchBtn.classList.add('search-panel-btn');
-  searchBtn.innerHTML = '<span class="search-panel-sparkle">&#10024;</span> SEARCH';
+  const sparkle = document.createElement('span');
+  sparkle.classList.add('search-panel-sparkle');
+  sparkle.textContent = '\u2728';
+  searchBtn.append(sparkle, document.createTextNode(' SEARCH'));
 
   searchRow.append(input, searchBtn);
   inner.append(heading, searchRow);
@@ -662,12 +665,12 @@ function buildSearchPanel() {
   return panel;
 }
 
-function toggleSearchPanel(panel, searchBtn) {
+function toggleSearchPanel(panel) {
   const isOpen = panel.getAttribute('aria-hidden') === 'false';
   panel.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
   if (!isOpen) {
     const input = panel.querySelector('.search-panel-input');
-    if (input) input.focus();
+    if (input instanceof HTMLInputElement) input.focus();
   }
 }
 
@@ -746,7 +749,7 @@ function buildDesktopHeader(brandNavDiv, toolsDiv) {
 
     const searchBtn = desktop.querySelector('.desktop-search');
     if (searchBtn) {
-      searchBtn.addEventListener('click', () => toggleSearchPanel(searchPanel, searchBtn));
+      searchBtn.addEventListener('click', () => toggleSearchPanel(searchPanel));
     }
 
     // Close on Escape
@@ -903,6 +906,7 @@ function populateLocalePopup(popup, localeData) {
       for (let i = 0; i < size; i += 1) {
         const btn = document.createElement('button');
         btn.classList.add('locale-option');
+        // eslint-disable-next-line secure-coding/detect-object-injection -- index bounded by column split of parsed nav locales
         btn.textContent = region.locales[offset + i];
         col.append(btn);
       }

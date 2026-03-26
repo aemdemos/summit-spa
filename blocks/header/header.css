@@ -1089,16 +1089,22 @@ header .desktop-header {
 
   header .search-panel-inner {
     max-width: 1080px;
-    margin: 0 auto;
-    padding: 30px 20px 20px;
+    padding-top: 30px;
+    margin: 30px auto;
+    margin-top: 0;
   }
 
   header .search-panel-heading {
-    font-size: 22px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: 600;
     color: #00266b;
-    margin: 0 0 20px;
+    margin: 0 0 10px;
     font-family: var(--body-font-family);
+    line-height: 24px;
+    width:28%;
+    background: linear-gradient(to right, #00266b 0%, #00266b 70%, #1066c6 70%, #2ca9f0 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   header .search-panel-heading .search-highlight {
@@ -1107,7 +1113,7 @@ header .desktop-header {
 
   header .search-panel-row {
     display: flex;
-    gap: 16px;
+    gap: 40px;
     align-items: stretch;
   }
 
@@ -1143,13 +1149,15 @@ header .desktop-header {
     color: #fff;
     border: none;
     border-radius: 0;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     cursor: pointer;
     font-family: var(--body-font-family);
     white-space: nowrap;
+    margin-top: 0;
+    -webkit-font-smoothing: antialiased;
   }
 
   header .search-panel-btn:hover {
