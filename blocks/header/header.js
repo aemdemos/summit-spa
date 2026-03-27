@@ -1432,13 +1432,15 @@ export default async function decorate(block) {
     const loginPopup = buildLoginPopup(loginData);
     document.body.append(loginPopup);
 
-    // Desktop utility login + mobile header user icon (same popup; header-bar hidden >= 1079px)
+    // Desktop login, mobile header user, slide-panel login — same popup
     const openLogin = () => openLoginPopup(loginPopup);
-    nav.querySelectorAll('.desktop-login').forEach((btn) => {
-      btn.addEventListener('click', openLogin);
-    });
-    nav.querySelectorAll('.header-user-btn').forEach((btn) => {
-      btn.addEventListener('click', openLogin);
+    nav.querySelectorAll('.desktop-login, .header-user-btn, .panel-login').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('panel-login') && nav.getAttribute('aria-expanded') === 'true') {
+          togglePanel(nav);
+        }
+        openLogin();
+      });
     });
   }
 

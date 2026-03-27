@@ -1629,7 +1629,9 @@ body.login-open {
   text-decoration: underline;
 }
 
-/* ========= Chat panel (bottom sheet: slides up / slides down to close) ========= */
+/* ========= Chat panel (bottom sheet) =========
+   Closed: translateY includes bottom offset + shadow blur, or a strip stays visible. */
+
 .chat-panel {
   position: fixed;
   bottom: 15px;
@@ -1643,7 +1645,7 @@ body.login-open {
   flex-direction: column;
   background: #fff;
   box-shadow: 0 -4px 24px rgb(0 0 0 / 18%);
-  transform: translateY(100%);
+  transform: translateY(calc(100% + 15px + 24px));
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   max-height: 640px;
   border-radius: 16px;
