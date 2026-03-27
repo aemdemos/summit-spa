@@ -169,6 +169,10 @@ main .hero-default-content p:last-child {
     right: 0;
     width: 57.5rem;
   }
+
+  main .hero-default-content > div:last-child {
+    width:400px;
+  }
 }
 
 /* ===== Wide desktop (1200+) ===== */
