@@ -1862,3 +1862,23 @@ body.chat-open {
     max-width: none;
   }
 }
+
+@media (width < 1079px) {
+  .login-popup-dialog {
+    margin: 0;
+    width: 100%;
+    top:0;
+    left:0;
+    min-height: 100vh;
+    max-height: 100vh;
+    min-width: 100%;
+  }
+
+  .login-radio-group {
+    display: block;
+  }
+
+  .login-popup-heading {
+    font-style: normal;
+  }
+}
