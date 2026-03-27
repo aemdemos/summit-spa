@@ -133,6 +133,24 @@
     position: absolute;
     top: 45%;
     transform: translateY(-50%);
+    max-width: 410px;
+  }
+}
+
+/*
+ * left (px) vs viewport width:
+ * 900px → 50px, 991px → 90px:  linear: 50 + (vw - 900) × 40/91
+ * 992px → 0px, 1199px → 100px: linear: 0 + (vw - 992) × 100/207
+ */
+@media (width >= 900px) and (width <= 991px) {
+  .hero-app-cta-content {
+    left: calc(50px + (100vw - 900px) * 40 / 91);
+  }
+}
+
+@media (width >= 992px) and (width <= 1199px) {
+  .hero-app-cta-content {
+    left: calc((100vw - 992px) * 100 / 207);
   }
 }
 
@@ -140,12 +158,8 @@
 @media (width >= 1200px) {
   .hero-app-cta-content {
     left: calc(50% - var(--max-width-site) / 2 + 32px);
-    padding-left: 40px;
+    padding-left: 30px;
+    max-width: 470px;
   }
 }
 
-@media (width >= 1250px) {
-  .hero-app-cta-content {
-    padding-left: 0;
-  }
-}

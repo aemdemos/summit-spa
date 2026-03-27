@@ -617,6 +617,63 @@ function buildDesktopNavLinks(brandNavDiv) {
   return navLinks;
 }
 
+function buildSearchPanel() {
+  const panel = document.createElement('div');
+  panel.classList.add('search-panel');
+  panel.setAttribute('aria-hidden', 'true');
+
+  const inner = document.createElement('div');
+  inner.classList.add('search-panel-inner');
+
+  // Heading: "Find answers with the help of AI"
+  const heading = document.createElement('h2');
+  heading.classList.add('search-panel-heading');
+  heading.textContent = 'Find answers with the help of AI';
+
+  // Search row: input + button
+  const searchRow = document.createElement('div');
+  searchRow.classList.add('search-panel-row');
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.classList.add('search-panel-input');
+  input.setAttribute('placeholder', 'Ask a question');
+
+  const searchBtn = document.createElement('button');
+  searchBtn.classList.add('search-panel-btn');
+  const sparkle = document.createElement('span');
+  sparkle.classList.add('search-panel-sparkle');
+  sparkle.textContent = '\u2728';
+  searchBtn.append(sparkle, document.createTextNode(' SEARCH'));
+
+  searchRow.append(input, searchBtn);
+  inner.append(heading, searchRow);
+  panel.append(inner);
+
+  // Close button at bottom
+  const closeRow = document.createElement('div');
+  closeRow.classList.add('search-panel-close-row');
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('search-panel-close');
+  closeBtn.textContent = 'CLOSE';
+  closeBtn.addEventListener('click', () => {
+    panel.setAttribute('aria-hidden', 'true');
+  });
+  closeRow.append(closeBtn);
+  panel.append(closeRow);
+
+  return panel;
+}
+
+function toggleSearchPanel(panel) {
+  const isOpen = panel.getAttribute('aria-hidden') === 'false';
+  panel.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+  if (!isOpen) {
+    const input = panel.querySelector('.search-panel-input');
+    if (input instanceof HTMLInputElement) input.focus();
+  }
+}
+
 function buildDesktopRight(toolsDiv) {
   const right = document.createElement('div');
   right.classList.add('desktop-right');
@@ -683,6 +740,26 @@ function buildDesktopHeader(brandNavDiv, toolsDiv) {
 
   mainRow.append(mainInner);
   desktop.append(mainRow);
+
+  // Search panel — appended after main row, toggled by search icon
+  const tools = findToolElements(toolsDiv);
+  if (tools.hasSearch) {
+    const searchPanel = buildSearchPanel();
+    desktop.append(searchPanel);
+
+    const searchBtn = desktop.querySelector('.desktop-search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => toggleSearchPanel(searchPanel));
+    }
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' && searchPanel.getAttribute('aria-hidden') === 'false') {
+        searchPanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
   return desktop;
 }
 
@@ -829,6 +906,7 @@ function populateLocalePopup(popup, localeData) {
       for (let i = 0; i < size; i += 1) {
         const btn = document.createElement('button');
         btn.classList.add('locale-option');
+        // eslint-disable-next-line secure-coding/detect-object-injection -- index bounded by column split of parsed nav locales
         btn.textContent = region.locales[offset + i];
         col.append(btn);
       }
@@ -839,6 +917,221 @@ function populateLocalePopup(popup, localeData) {
     section.append(grid);
     content.append(section);
   });
+}
+
+function textAt(paragraphs, i) {
+  return i < paragraphs.length ? paragraphs[i].textContent.trim() : '';
+}
+
+function linkAt(paragraphs, i) {
+  if (i >= paragraphs.length) return null;
+  const a = paragraphs[i].querySelector('a');
+  return a ? { text: a.textContent.trim(), href: a.href } : null;
+}
+
+function parseLoginFragment(wrapper) {
+  const h2 = wrapper.querySelector('h2');
+  const heading = h2 ? h2.textContent.trim() : 'Log in';
+
+  // Radio options come from the <ul> list
+  const radioOptions = [...wrapper.querySelectorAll('ul > li')]
+    .map((li) => li.textContent.trim());
+
+  // Ordered <p> fields: userLabel, passLabel, rememberLabel, resetLink,
+  // submitLabel, forgotMemberLink, signupText, signupLink
+  const paragraphs = [...wrapper.querySelectorAll('p')];
+  let idx = 0;
+  const userLabel = textAt(paragraphs, idx); idx += 1;
+  // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- label text, not a credential
+  const passLabel = textAt(paragraphs, idx); idx += 1;
+  const rememberLabel = textAt(paragraphs, idx); idx += 1;
+  const resetLink = linkAt(paragraphs, idx); idx += 1;
+  const submitLabel = textAt(paragraphs, idx); idx += 1;
+  const forgotMemberLink = linkAt(paragraphs, idx); idx += 1;
+  const signupText = textAt(paragraphs, idx); idx += 1;
+  const signupLink = linkAt(paragraphs, idx);
+
+  return {
+    heading,
+    radioOptions,
+    userLabel,
+    passLabel,
+    rememberLabel,
+    resetLink,
+    submitLabel,
+    forgotMemberLink,
+    signupText,
+    signupLink,
+  };
+}
+
+function parseLoginData(loginDiv) {
+  if (!loginDiv) return null;
+  const inner = loginDiv.querySelector(':scope > div') || loginDiv;
+  return parseLoginFragment(inner);
+}
+
+function buildLoginPopup(loginData) {
+  const popup = document.createElement('div');
+  popup.classList.add('login-popup');
+  popup.setAttribute('aria-hidden', 'true');
+
+  // Overlay
+  const overlay = document.createElement('div');
+  overlay.classList.add('login-popup-overlay');
+  popup.append(overlay);
+
+  const dialog = document.createElement('div');
+  dialog.classList.add('login-popup-dialog');
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-labelledby', 'login-popup-heading');
+
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('login-popup-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+  dialog.append(closeBtn);
+
+  // Heading
+  const heading = document.createElement('h2');
+  heading.classList.add('login-popup-heading');
+  heading.id = 'login-popup-heading';
+  heading.textContent = loginData.heading;
+  dialog.append(heading);
+
+  // Radio group
+  if (loginData.radioOptions.length > 0) {
+    const radioGroup = document.createElement('div');
+    radioGroup.classList.add('login-radio-group');
+    radioGroup.setAttribute('role', 'radiogroup');
+    loginData.radioOptions.forEach((option, i) => {
+      const label = document.createElement('label');
+      label.classList.add('login-radio-label');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'login-type';
+      radio.classList.add('login-radio');
+      if (i === 0) radio.checked = true;
+      const span = document.createElement('span');
+      span.textContent = option;
+      label.append(radio, span);
+      radioGroup.append(label);
+    });
+    dialog.append(radioGroup);
+  }
+
+  // Form fields
+  const form = document.createElement('div');
+  form.classList.add('login-form');
+
+  // Username field
+  const userField = document.createElement('div');
+  userField.classList.add('login-field');
+  const userInput = document.createElement('input');
+  userInput.type = 'text';
+  userInput.classList.add('login-input');
+  userInput.setAttribute('placeholder', ' ');
+  userInput.id = 'login-user';
+  const userLabelEl = document.createElement('label');
+  userLabelEl.classList.add('login-label');
+  userLabelEl.setAttribute('for', 'login-user');
+  userLabelEl.textContent = loginData.userLabel;
+  userField.append(userInput, userLabelEl);
+  form.append(userField);
+
+  const passField = document.createElement('div');
+  passField.classList.add('login-field');
+  const passInput = document.createElement('input');
+  // eslint-disable-next-line secure-coding/no-hardcoded-credentials -- HTML input type attribute, not a credential
+  passInput.type = 'password';
+  passInput.classList.add('login-input');
+  passInput.setAttribute('placeholder', ' ');
+  passInput.id = 'login-pass';
+  const passLabelEl = document.createElement('label');
+  passLabelEl.classList.add('login-label');
+  passLabelEl.setAttribute('for', 'login-pass');
+  passLabelEl.textContent = loginData.passLabel;
+  passField.append(passInput, passLabelEl);
+  form.append(passField);
+
+  // Options row: Remember me + Reset Password
+  const optionsRow = document.createElement('div');
+  optionsRow.classList.add('login-options');
+  const rememberWrap = document.createElement('label');
+  rememberWrap.classList.add('login-remember');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.classList.add('login-checkbox');
+  const rememberText = document.createElement('span');
+  rememberText.textContent = loginData.rememberLabel;
+  rememberWrap.append(checkbox, rememberText);
+  optionsRow.append(rememberWrap);
+
+  if (loginData.resetLink) {
+    const reset = document.createElement('a');
+    reset.href = loginData.resetLink.href;
+    reset.textContent = loginData.resetLink.text;
+    reset.classList.add('login-reset-link');
+    optionsRow.append(reset);
+  }
+  form.append(optionsRow);
+
+  // Submit button
+  const submitBtn = document.createElement('button');
+  submitBtn.classList.add('login-submit');
+  submitBtn.textContent = loginData.submitLabel;
+  form.append(submitBtn);
+
+  // Bottom links
+  const bottomLinks = document.createElement('div');
+  bottomLinks.classList.add('login-bottom-links');
+
+  if (loginData.forgotMemberLink) {
+    const link = document.createElement('a');
+    link.href = loginData.forgotMemberLink.href;
+    link.textContent = loginData.forgotMemberLink.text;
+    link.classList.add('login-bottom-link');
+    bottomLinks.append(link);
+  }
+
+  if (loginData.signupLink) {
+    const wrap = document.createElement('div');
+    wrap.classList.add('login-bottom-link');
+    const textBefore = loginData.signupText || '';
+    if (textBefore) wrap.append(document.createTextNode(textBefore));
+    const signupA = document.createElement('a');
+    signupA.href = loginData.signupLink.href;
+    signupA.textContent = loginData.signupLink.text;
+    wrap.append(signupA);
+    bottomLinks.append(wrap);
+  }
+
+  form.append(bottomLinks);
+  dialog.append(form);
+  popup.append(dialog);
+
+  // Close handlers
+  function closePopup() {
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('login-open');
+  }
+
+  closeBtn.addEventListener('click', closePopup);
+  overlay.addEventListener('click', closePopup);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && popup.getAttribute('aria-hidden') === 'false') {
+      closePopup();
+    }
+  });
+
+  return popup;
+}
+
+function openLoginPopup(popup) {
+  popup.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('login-open');
 }
 
 function openLocalePopup(popup) {
@@ -853,6 +1146,224 @@ function openLocalePopup(popup) {
   }
   const dialog = popup.querySelector('.locale-popup-dialog');
   if (dialog) dialog.setAttribute('aria-modal', wide ? 'false' : 'true');
+}
+
+/* ---- Chat panel (5th nav section) ---- */
+
+function parseChatData(chatDiv) {
+  if (!chatDiv) return null;
+  const inner = chatDiv.querySelector(':scope > div') || chatDiv;
+  const h2 = inner.querySelector('h2');
+  const title = h2 ? h2.textContent.trim() : 'Chat with Kris';
+
+  const paragraphs = [...inner.querySelectorAll('p')];
+  const welcomeMsg = textAt(paragraphs, 0);
+  const examples = [...inner.querySelectorAll('ul > li')]
+    .map((li) => li.textContent.trim());
+  const placeholder = textAt(paragraphs, 1);
+  const disclaimer = textAt(paragraphs, 2);
+  const startOverLabel = textAt(paragraphs, 3);
+  const tcsLink = linkAt(paragraphs, 4);
+
+  return {
+    title,
+    welcomeMsg,
+    examples,
+    placeholder,
+    disclaimer,
+    startOverLabel,
+    tcsLink,
+  };
+}
+
+// eslint-disable-next-line browser-security/detect-mixed-content, browser-security/no-http-urls -- SVG namespace URI
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  return el;
+}
+
+function createCloseSvg() {
+  const svg = svgEl('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none' });
+  const p1 = svgEl('path', { d: 'M15 5L5 15', stroke: '#333', 'stroke-width': '1.5', 'stroke-linecap': 'round' });
+  const p2 = svgEl('path', { d: 'M5 5L15 15', stroke: '#333', 'stroke-width': '1.5', 'stroke-linecap': 'round' });
+  svg.append(p1, p2);
+  return svg;
+}
+
+function createSendSvg() {
+  const svg = svgEl('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'none' });
+  const g = svgEl('g', { 'clip-path': 'url(#sendClip)' });
+  const arrowD = [
+    'M4.698 4.033L21 12l-16.302 7.966',
+    'a.543.543 0 0 1-.292-.124.55.55 0 0 1-.153-.267',
+    '.56.56 0 0 1 .02-.325L6.5 12 4.032 4.726',
+    'a.56.56 0 0 1 .02-.3.55.55 0 0 1 .153-.268',
+    '.543.543 0 0 1 .493-.124Z',
+  ].join('');
+  const p1 = svgEl('path', {
+    d: arrowD, stroke: '#999', 'stroke-width': '1.333', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+  const p2 = svgEl('path', {
+    d: 'M6.5 12H21', stroke: '#999', 'stroke-width': '1.333', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+  g.append(p1, p2);
+  const defs = svgEl('defs');
+  const clip = svgEl('clipPath', { id: 'sendClip' });
+  clip.append(svgEl('rect', { width: '24', height: '24', fill: 'white' }));
+  defs.append(clip);
+  svg.append(g, defs);
+  return svg;
+}
+
+function createRefreshSvg() {
+  const svg = svgEl('svg', { width: '12', height: '12', viewBox: '0 0 12 12', fill: 'none' });
+  const pathD = [
+    'M7.642 7.991a4 4 0 0 1-2.646.989',
+    ' 4 4 0 0 1-2.64-1.005A4 4 0 0 1 1.04 5.476',
+    ' 4 4 0 0 1 1.7 2.73a4 4 0 0 1 2.312-1.624',
+    ' 4 4 0 0 1 2.808.308 4 4 0 0 1 1.905 2.086',
+    'M8.975 1v2.5h-2.5',
+  ].join('');
+  svg.append(svgEl('path', {
+    d: pathD, stroke: '#0254EC', 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  }));
+  return svg;
+}
+
+function buildChatPanel(chatData) {
+  const panel = document.createElement('div');
+  panel.classList.add('chat-panel');
+  panel.setAttribute('aria-hidden', 'true');
+
+  // Header bar
+  const header = document.createElement('div');
+  header.classList.add('chat-panel-header');
+
+  const headerLeft = document.createElement('div');
+  headerLeft.classList.add('chat-panel-header-left');
+
+  const chatIcon = document.createElement('span');
+  chatIcon.classList.add('chat-panel-icon');
+  headerLeft.append(chatIcon);
+
+  const titleEl = document.createElement('span');
+  titleEl.classList.add('chat-panel-title');
+  titleEl.textContent = chatData.title;
+  headerLeft.append(titleEl);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('chat-panel-close');
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.append(createCloseSvg());
+
+  header.append(headerLeft, closeBtn);
+  panel.append(header);
+
+  // Messages area
+  const messages = document.createElement('div');
+  messages.classList.add('chat-panel-messages');
+
+  // Welcome bubble
+  const bubble1 = document.createElement('div');
+  bubble1.classList.add('chat-bubble');
+  bubble1.textContent = chatData.welcomeMsg;
+  messages.append(bubble1);
+
+  // Examples bubble
+  if (chatData.examples.length > 0) {
+    const bubble2 = document.createElement('div');
+    bubble2.classList.add('chat-bubble');
+    const intro = document.createElement('p');
+    intro.textContent = 'Just start a chat by typing in your questions, such as:';
+    bubble2.append(intro);
+    const ul = document.createElement('ul');
+    chatData.examples.forEach((ex) => {
+      const li = document.createElement('li');
+      li.textContent = ex;
+      ul.append(li);
+    });
+    bubble2.append(ul);
+    messages.append(bubble2);
+  }
+
+  panel.append(messages);
+
+  // Input area
+  const inputArea = document.createElement('div');
+  inputArea.classList.add('chat-panel-input');
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.classList.add('chat-input');
+  input.setAttribute('placeholder', chatData.placeholder || 'Ask a question...');
+  inputArea.append(input);
+
+  const sendBtn = document.createElement('button');
+  sendBtn.classList.add('chat-send-btn');
+  sendBtn.setAttribute('aria-label', 'Send');
+  sendBtn.append(createSendSvg());
+  inputArea.append(sendBtn);
+
+  panel.append(inputArea);
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.classList.add('chat-panel-footer');
+
+  const disc = document.createElement('span');
+  disc.classList.add('chat-disclaimer');
+  disc.textContent = chatData.disclaimer;
+  footer.append(disc);
+
+  const footerLinks = document.createElement('div');
+  footerLinks.classList.add('chat-footer-links');
+
+  const startOver = document.createElement('button');
+  startOver.classList.add('chat-start-over');
+  const startOverText = document.createElement('span');
+  startOverText.textContent = chatData.startOverLabel || 'Start over';
+  startOver.append(startOverText);
+  startOver.append(createRefreshSvg());
+  footerLinks.append(startOver);
+
+  if (chatData.tcsLink) {
+    const sep = document.createElement('span');
+    sep.classList.add('chat-footer-sep');
+    sep.textContent = '|';
+    footerLinks.append(sep);
+    const tcs = document.createElement('a');
+    tcs.classList.add('chat-tcs-link');
+    tcs.href = chatData.tcsLink.href;
+    tcs.textContent = chatData.tcsLink.text;
+    footerLinks.append(tcs);
+  }
+
+  footer.append(footerLinks);
+  panel.append(footer);
+
+  // Close handlers
+  function closePanel() {
+    panel.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('chat-open');
+  }
+
+  closeBtn.addEventListener('click', closePanel);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && panel.getAttribute('aria-hidden') === 'false') {
+      closePanel();
+    }
+  });
+
+  return panel;
+}
+
+function openChatPanel(panel) {
+  panel.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('chat-open');
 }
 
 /**
@@ -872,7 +1383,9 @@ export default async function decorate(block) {
   const topDivs = wrapper.querySelectorAll(':scope > div');
   const brandNavDiv = topDivs[0];
   const toolsDiv = topDivs[1];
-  const localeDiv = topDivs[2];
+  const localeDiv = topDivs[2] || null;
+  const loginDiv = topDivs[3] || null;
+  const chatDiv = topDivs[4] || null;
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
@@ -912,6 +1425,36 @@ export default async function decorate(block) {
       document.body.classList.remove('locale-open');
     }
   });
+
+  // Login popup — content from nav document (4th section)
+  const loginData = parseLoginData(loginDiv);
+  if (loginData) {
+    const loginPopup = buildLoginPopup(loginData);
+    document.body.append(loginPopup);
+
+    // Desktop login, mobile header user, slide-panel login — same popup
+    const openLogin = () => openLoginPopup(loginPopup);
+    nav.querySelectorAll('.desktop-login, .header-user-btn, .panel-login').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('panel-login') && nav.getAttribute('aria-expanded') === 'true') {
+          togglePanel(nav);
+        }
+        openLogin();
+      });
+    });
+  }
+
+  // Chat panel — content from nav document (5th section)
+  const chatData = parseChatData(chatDiv);
+  if (chatData) {
+    const chatPanel = buildChatPanel(chatData);
+    document.body.append(chatPanel);
+
+    // Wire all chat buttons (mobile + desktop utility bar)
+    nav.querySelectorAll('.utility-chat').forEach((btn) => {
+      btn.addEventListener('click', () => openChatPanel(chatPanel));
+    });
+  }
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
